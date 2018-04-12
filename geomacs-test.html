@@ -30,24 +30,31 @@
     var wildfiresUS2018 = new L.LayerGroup();
     var wildfiresCO2017 = new L.LayerGroup();
 
-    // var mapboxMap = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-    //     maxZoom: 18,
-    //     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-    //         '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-    //         'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    //     id: 'mapbox.light'
-    // }).addTo(map);
+    var monochromeMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', { attribution: 'Map tiles by <a href="http://stamen.com">stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', subdomains: 'abcd', minZoom: 0, maxZoom: 13, ext: 'png' });
 
-    var stamenMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
-        attribution: 'Map tiles by <a href="http://stamen.com">stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    var roadMap = L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', {
+        attribution: '<a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>',
+        minZoom: 1,
+        maxZoom: 13
+    });
+
+    var terrainMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.{ext}', {
+        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         subdomains: 'abcd',
         minZoom: 0,
-        maxZoom: 20,
+        maxZoom: 13,
         ext: 'png'
     });
 
+    var satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
+
     var baseLayers = {
-        "Monochrome map": stamenMap,
+        "Monochrome map": monochromeMap,
+        "Road map": roadMap,
+        "Terrain map": terrainMap,
+        "Satellite map": satelliteMap
     }
 
     var groupedOverlays = {
@@ -60,7 +67,7 @@
     var map = L.map('map', {
         center: [39.74739, -105],
         zoom: 7,
-        layers: [stamenMap, wildfiresUS2018]
+        layers: [monochromeMap, wildfiresUS2018]
     });
 
     // U.S. fires in 2018
