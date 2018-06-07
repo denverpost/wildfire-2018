@@ -58,6 +58,14 @@
 <body>
     <div id="map"></div>
     <script>
+    function parseCoords(input) {
+    	var l = parseFloat(input);
+    	if (l > -180 || l < 180) {
+    		return l;
+    	} else {
+    		return false;
+    	}
+    }
     // From https://www.raymondcamden.com/2015/12/08/parsing-rss-feeds-in-javascript-options
     $(document).ready(function() {
         var yql = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20rss%20where%20url%20in%20('https%3A%2F%2Finciweb.nwcg.gov%2Ffeeds%2Frss%2Fincidents%2F')&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
@@ -75,8 +83,8 @@
                     "geometry": {
                         "type": "Point",
                         "coordinates": [
-                            parseFloat(entries[k]['long']),
-                            parseFloat(entries[k]['lat'])
+                            parseCoords(entries[k]['long']),
+                            parseCoords(entries[k]['lat'])
                         ]
                     },
                     "properties": {
@@ -86,9 +94,9 @@
                         "link": entries[k].link
                     }
                 }
-                //console.log(newFeature.properties.title + '/' + newFeature.geometry.coordinates);
 
-                if (entries[k].title.includes('Wildfire') && entries[k]['long'] != NaN && entries[k]['lat'] != NaN) {
+                if (newFeature.properties.title.includes('Wildfire') && !(newFeature.geometry.coordinates.includes(false))) {
+                	//console.log(newFeature.properties.title + '/' + newFeature.geometry.coordinates);
                     geojson['features'].push(newFeature);
                 }
             }
