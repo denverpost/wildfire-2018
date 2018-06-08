@@ -67,41 +67,37 @@
     };
 
     var map = L.map('map', {
-        center: [39.74739, -105],
-        zoom: 7,
+        center: [39.5501, -105.7821],
+        zoom: 6,
         layers: [monochromeMap, activeWildfiresUS2018, activeComplexWildfiresUS2018]
+    });
+    var activeFireIcon = L.icon({
+        iconUrl: 'active-fire.png',
+        iconSize: [35, 35]
+    });
+    var containedFireIcon = L.icon({
+        iconUrl: 'contained-fire.png',
+        iconSize: [20, 20]
     });
 
     // Active U.S. wildfires in 2018
     $.getJSON("https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/0/query?where=&text=&objectIds=&time=2018&geometry=&geometryType=esriGeometryPoint&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson&__ncforminfo=BYBWG9ZU96FKks5_Z7QEHPf7Kd5aFTxqIXrLoradeuG71UO9JBsi9SndV54o9AJgA-WtSGmSBU19XtU-_9xIq8pRAI632DREEt2d8kv0h_I9b0pxF4IGOlWbB4v5upTyORUQXb5Zuh_lGgWPeSekb9SdzgTTrzFMBAUKb1HK-TXw1VQLzFZ5YZ7a3m0mmiJ7c4449BOx5oNCYYBoMbWMxsfV2U3_D2k8D3bVBr_VVeqYwM4pYIzcjus4_qrp5NdEgJ5ZgEVvdAUwHUDa6kyTOkGSVAR9pusNYyN0JOomGYD13kguQK2rxWWaJwBBmBNfIQYRrMbxbpchpOWt3V2tQ9qyrcvuS4d3DDzAUmtT2or2nPqLTf5LFYJtbJHAWiAHFZgj4km3HT0WwoxD9St3Xtr8BN1OPYNB7Q9loyujS8uQ7G9l_lpCfm7cy4GjhCHf-45oYJbt-YYeC15ypLQAYVIBGONZu66ATmkxTW7BAYvfannRzykDoHp-XR7vngUcrGZiYimCCUEpm8nhxkom-Mr5g2m5vAO3lVBxe6lLOOD_Yfhy0lnhWECBDC4H22aTn8zbPV4RIivoHQKvOVEdClMoOwTkHpGeskCPZhVpiYbjoVVUbIPJmAWM3w00apvLOtQ9iNW6zH8Gx5pVroOD8O4dv2ebxQtyZnqDZPu6LDmA8WRFlqKBDA%3D%3D", function(data) {
-        var activeFireIcon = L.icon({
-            iconUrl: 'active-fire.png',
-            iconSize: [35, 35]
-        });
-        var containedFireIcon = L.icon({
-            iconUrl: 'contained-fire.png',
-            iconSize: [35, 35]
-        });
         L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
                 var marker = L.marker(latlng, { icon: activeFireIcon });
                 marker.bindPopup('Name: ' + feature.properties.incidentname + '<br>' + 'Acres: ' + feature.properties.acres + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%');
+                var fireSize = Math.sqrt(feature.properties.acres) * .75;
+                console.log(fireSize);
                 return marker;
-            }
+            },
         }).addTo(activeWildfiresUS2018);
-        console.log(data);
+        //console.log(data);
     });
+
+    // THIS MIGHT HELP WITH MARKERS BASED ON SIZE: https://gis.stackexchange.com/questions/227139/custom-marker-and-properties-from-geojson-in-leaflet
 
     // Active U.S. complexes in 2018
     $.getJSON("https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/1/query?where=&text=&objectIds=&time=2018&geometry=&geometryType=esriGeometryPoint&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson&__ncforminfo=DMimt_s_f-IEDhoYyhysyIfKhOTs-VdxFSs-7Szu-ukQTRIZ6lvYGF7AaYXs1llK1GIPOdZetx5zRVUYE22A1xv5grxpnngzeac6ct-ExMo_-MJsoteVkGgWw0ssrXR_KkYtnnNh6iUiU2ab4eXzMCLJWUy1cWMD4APf4MtlqEcGdAZGJbrihrydrB8aOMf2xp8102yN6WOno4UPaUW8sdbt_bqr-ZWgn6Gruu48yQ6gbBJbZw_V-V06HQMB9KFxhvdQ_YIJDQtVCxvz5KC7XTb4ox644NMlv_iUpdQhINkxHw7XpIzvGYO09EYWZDL0k-T3z2KbRNUOIaKQ_Mkdo2xGnlGbFats-32BuxnN4D11wBGPLWOf8NP4f1L3FJTgqRS6Jsj1HindzmgNj-f6Njxdzoi2vw8olDlccEZhwLKMN6MYUwVj5k_07szk1ueW5a0QJJCrGZnh-mSVAKR0qtvjCkC-zYYsJccDsg0qziKZOWIB1tEgBccPmzlBnmgoxqWCyytsF_efZpwYE7J6HFGNIZzgJYzPO5oahV5GDZava-jUtyfgqDlHuuVlbdR23Ap_dT-XGOQV9IDImn-NxZrYdY9jsSga3xZX47kjN7VIhZ-oF5iCbzpqHqGUZCJzHyubsnPl7uS3dVaf5FNKQJW0G7oZqlm5Jowyagcxf7giDhouAmmniw%3D%3D", function(data) {
-        var activeFireIcon = L.icon({
-            iconUrl: 'active-fire.png',
-            iconSize: [35, 35]
-        });
-        var containedFireIcon = L.icon({
-            iconUrl: 'contained-fire.png',
-            iconSize: [35, 35]
-        });
         L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
                 var marker = L.marker(latlng, { icon: activeFireIcon });
@@ -109,15 +105,11 @@
                 return marker;
             }
         }).addTo(activeComplexWildfiresUS2018);
-        console.log(data);
+        //console.log(data);
     });
 
     // Inactive U.S. wildfires in 2018
     $.getJSON("https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/7/query?where=&text=&objectIds=&time=2018&geometry=&geometryType=esriGeometryPoint&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson&__ncforminfo=c0t2_KSaod0r6feIJhyxYh0p2Zsa7pEeh1CLlitqhpwYCxBugGVyWZ8N_72C1AWvRFzeHIlQzRqR872J0nKNhKcKjx7ELyxsTp4oKLKO6jjXANreDaavmfKd86bewHs4Aki_nFbRhIABt_hwAuOoWDdmKyaYgmEPbEO1GADx1eO80yrmwBzHWWBYBrBTqFCVDV1Q-ee2JrN_c0RQMBnmmCWx-ISeM6YXszzjLnPfriJBigQR9o0MnT0ZArkSO0YnjqXIxboKXO2GZKIeifLGpUJklHLsWkGK14gqbqu5RxBgaaRluNkccg7AhdN07s-wAxNiqNQVKvjcZG1-mtogvAN3rmJYkbjJuZCREDxHLyIsiS3zN5PZ_4Zd-b35jpdKUyIOhhY2Exl6-OHxv8-Df5SWXnpemoP2J1M1r0J7FF7vJwx5zQfHZXWSYBmxxc8uhT5IEL85Vcejth7frcEYPr9GoVbg4RXC5jPH_ROWTPxJfu2CG-Wh66-XtzEs4j4OvZqZ7B4G0_Z7kfmYACEHAaVAZyZ-UANAEALtsuCuSwiRLj4n-3rnsZ4j7esn6kB4gc-ih4yJ_hDtpso1sgIxwGNO7XyxV1nTP8iBS_AafotLafTlsRWH99Ny5UJTWuuEPm48ZF6j6uq3JWmm-oBeYrzZXdINmhtqP5RFPOrAxgEHW8CucnI2JA%3D%3D", function(data) {
-        var containedFireIcon = L.icon({
-            iconUrl: 'contained-fire.png',
-            iconSize: [35, 35]
-        });
         L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
                 var marker = L.marker(latlng, { icon: containedFireIcon });
@@ -125,7 +117,7 @@
                 return marker;
             }
         }).addTo(containedWildfiresUS2018);
-        console.log(data);
+        //console.log(data);
     });
 
     // Colorado wildfires in 2017
