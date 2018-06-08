@@ -59,8 +59,8 @@
 
     var groupedOverlays = {
         "Background": {
-            "All 2018 fires": wildfiresUS2018,
-            "Colorado 2017 fires": wildfiresCO2017
+            "All 2018 fires": wildfiresUS2018
+            //"Colorado 2017 fires": wildfiresCO2017
         },
     };
 
@@ -71,7 +71,7 @@
     });
 
     // U.S. fires in 2018
-    $.getJSON("us-fires-2018.json", function(data) {
+    $.getJSON("perimeters_dd83.json", function(data) {
         L.geoJson(data, {
             style: function(feature) {
                 var fillColor
@@ -81,7 +81,7 @@
                     fillColor = "#ff0000",
                         borderColor = "#ff0000"
                 } else {
-                    fillColor = "#0000ff",
+                    //fillColor = "#0000ff",
                         borderColor = "#0000ff"
                 };
                 return {
@@ -101,34 +101,34 @@
     });
 
     // Colorado wildfires in 2017
-    $.getJSON("colorado-wildfires-2017.json", function(data) {
-        L.geoJson(data, {
-            style: function(feature) {
-                var fillColor
-                var borderColor,
-                    status = feature.properties.ACTIVE;
-                if (status === 'Y') {
-                    fillColor = "#ff0000",
-                        borderColor = "#ff0000"
-                } else {
-                    fillColor = "#0000ff",
-                        borderColor = "#0000ff"
-                };
-                return {
-                    weight: 2,
-                    fillColor: fillColor,
-                    fillOpacity: .1,
-                    color: borderColor
-                };
-            },
-            onEachFeature: function(feature, layer) {
-                layer.bindPopup(
-                    feature.properties.fireName + '<br>' + feature.properties.ACTIVE + '<br>Datecrnt: ' + feature.properties.dateCrnt + '<br>Perdattime: ' + feature.properties.perDatTime + '<br>Acres: ' + feature.properties.GISACRES
-                )
-            }
-        }).addTo(wildfiresCO2017);
-        console.log(data);
-    });
+    // $.getJSON("colorado-wildfires-2017.json", function(data) {
+    //     L.geoJson(data, {
+    //         style: function(feature) {
+    //             var fillColor
+    //             var borderColor,
+    //                 status = feature.properties.ACTIVE;
+    //             if (status === 'Y') {
+    //                 fillColor = "#ff0000",
+    //                     borderColor = "#ff0000"
+    //             } else {
+    //                 fillColor = "#0000ff",
+    //                     borderColor = "#0000ff"
+    //             };
+    //             return {
+    //                 weight: 2,
+    //                 fillColor: fillColor,
+    //                 fillOpacity: .1,
+    //                 color: borderColor
+    //             };
+    //         },
+    //         onEachFeature: function(feature, layer) {
+    //             layer.bindPopup(
+    //                 feature.properties.fireName + '<br>' + feature.properties.ACTIVE + '<br>Datecrnt: ' + feature.properties.dateCrnt + '<br>Perdattime: ' + feature.properties.perDatTime + '<br>Acres: ' + feature.properties.GISACRES
+    //             )
+    //         }
+    //     }).addTo(wildfiresCO2017);
+    //     console.log(data);
+    // });
     L.control.groupedLayers(baseLayers, groupedOverlays).addTo(map);
     </script>
 </body>

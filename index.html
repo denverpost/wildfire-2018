@@ -209,7 +209,7 @@
     var wildfireUpdateTemplate = Handlebars.compile($('#wildfire-update-template').html());
     $('#wildfire-update').sheetrock({
         url: spreadsheetWildfireUpdate,
-        query: "select C,D,E,F,G,H,I,J",
+        query: "select B,C,D,E,F,G,H,I,J,K,L",
         //query: "select A,B,C,D,E,L where E = 'Both' order by L desc",
         //fetchSize: 10
         rowTemplate: wildfireUpdateTemplate
