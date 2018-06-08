@@ -29,6 +29,7 @@
     <script>
     var activeWildfiresUS2018 = new L.LayerGroup();
     var activeComplexWildfiresUS2018 = new L.LayerGroup();
+    var containedWildfiresUS2018 = new L.LayerGroup();
 
     var monochromeMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', { attribution: 'Map tiles by <a href="http://stamen.com">stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', subdomains: 'abcd', minZoom: 0, maxZoom: 13, ext: 'png' });
 
@@ -60,7 +61,8 @@
     var groupedOverlays = {
         "Background": {
             "Active wildfires": activeWildfiresUS2018,
-            "Active complexes": activeComplexWildfiresUS2018
+            "Active complexes": activeComplexWildfiresUS2018,
+            "Inactive wildfires": containedWildfiresUS2018
         },
     };
 
@@ -107,6 +109,22 @@
                 return marker;
             }
         }).addTo(activeComplexWildfiresUS2018);
+        console.log(data);
+    });
+
+    // Inactive U.S. wildfires in 2018
+    $.getJSON("https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/7/query?where=&text=&objectIds=&time=2018&geometry=&geometryType=esriGeometryPoint&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson&__ncforminfo=c0t2_KSaod0r6feIJhyxYh0p2Zsa7pEeh1CLlitqhpwYCxBugGVyWZ8N_72C1AWvRFzeHIlQzRqR872J0nKNhKcKjx7ELyxsTp4oKLKO6jjXANreDaavmfKd86bewHs4Aki_nFbRhIABt_hwAuOoWDdmKyaYgmEPbEO1GADx1eO80yrmwBzHWWBYBrBTqFCVDV1Q-ee2JrN_c0RQMBnmmCWx-ISeM6YXszzjLnPfriJBigQR9o0MnT0ZArkSO0YnjqXIxboKXO2GZKIeifLGpUJklHLsWkGK14gqbqu5RxBgaaRluNkccg7AhdN07s-wAxNiqNQVKvjcZG1-mtogvAN3rmJYkbjJuZCREDxHLyIsiS3zN5PZ_4Zd-b35jpdKUyIOhhY2Exl6-OHxv8-Df5SWXnpemoP2J1M1r0J7FF7vJwx5zQfHZXWSYBmxxc8uhT5IEL85Vcejth7frcEYPr9GoVbg4RXC5jPH_ROWTPxJfu2CG-Wh66-XtzEs4j4OvZqZ7B4G0_Z7kfmYACEHAaVAZyZ-UANAEALtsuCuSwiRLj4n-3rnsZ4j7esn6kB4gc-ih4yJ_hDtpso1sgIxwGNO7XyxV1nTP8iBS_AafotLafTlsRWH99Ny5UJTWuuEPm48ZF6j6uq3JWmm-oBeYrzZXdINmhtqP5RFPOrAxgEHW8CucnI2JA%3D%3D", function(data) {
+        var containedFireIcon = L.icon({
+            iconUrl: 'contained-fire.png',
+            iconSize: [35, 35]
+        });
+        L.geoJson(data, {
+            pointToLayer: function(feature, latlng) {
+                var marker = L.marker(latlng, { icon: containedFireIcon });
+                marker.bindPopup('Name: ' + feature.properties.incidentname + '<br>' + 'Acres: ' + feature.properties.acres + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%');
+                return marker;
+            }
+        }).addTo(containedWildfiresUS2018);
         console.log(data);
     });
 
