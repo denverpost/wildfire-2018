@@ -118,7 +118,7 @@
                 var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
                 var updateDate = moment(feature.properties.reportdatetime).format('LLL');
                 var marker = L.marker(latlng, { icon: activeFireIcon });
-                marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + feature.properties.acres + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + 'Started: ' + discoveryDate + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
+                marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + feature.properties.acres + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate +  '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
                 var fireSize = Math.sqrt(feature.properties.acres) * .75;
                 console.log(fireSize);
                 return marker;
