@@ -23,6 +23,7 @@
     #map {
         width: 100%;
         height: 800px;
+        border: 1px solid silver;
     }
 
     .leaflet-popup-content-wrapper {
@@ -48,7 +49,7 @@
 
     .update {
         font-size: .8rem;
-        color: #c3c3c3;
+        color: #9b9b9b;
         font-style: italic;
     }
     </style>
@@ -98,7 +99,7 @@
     };
 
     var map = L.map('map', {
-        center: [39.5501, -105.7821],
+        center: [39.0119, -101.4842],
         zoom: 6,
         layers: [monochromeMap, activeWildfiresUS2018, activeComplexWildfiresUS2018]
     });
@@ -138,7 +139,7 @@
                 var marker = L.marker(latlng, { icon: activeFireIcon });
                 marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + feature.properties.acres + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate +  '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
                 var fireSize = Math.sqrt(feature.properties.acres) * .75;
-                console.log(fireSize);
+                //console.log(fireSize);
                 return marker;
             }
         }).addTo(activeComplexWildfiresUS2018);
@@ -154,7 +155,7 @@
                 var marker = L.marker(latlng, { icon: containedFireIcon });
                 marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + feature.properties.acres + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate +  '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
                 var fireSize = Math.sqrt(feature.properties.acres) * .75;
-                console.log(fireSize);
+                //console.log(fireSize);
                 return marker;
             }
         }).addTo(containedWildfiresUS2018);
