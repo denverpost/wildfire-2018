@@ -68,35 +68,84 @@
         *display: inline;
     }
 
-    .legend-text {
+    .legend-types {
+        display: inline-block;
+        zoom: 1;
+        *display: inline;
+    }
+
+    .legend-marker-text {
         margin-top: -32px;
         margin-left: 35px;
         margin-right: 10px;
+    }
+
+    .legend-perimeter-text {
+        margin-top: -17px;
+        margin-left: 23px;
+        margin-right: 10px;
+    }
+
+    .legend-title {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        margin-left: -20px;
+        margin-bottom: -13px;
+    }
+
+    #legend-active,
+    #legend-inactive {
+        height: 17px;
+        width: 17px;
+        border-radius: 50%;
+    }
+
+    #legend-active {
+        background: #c03639;
+    }
+
+    #legend-inactive {
+        background: #000;
     }
     </style>
 </head>
 
 <body>
-    <ul style="padding-top: 5px;">
-        <li><img src="small-fire.png">
-            <p class="legend-text">
-                < 1,000 acres</p>
-        </li>
-        <li><img src="medium-fire.png">
-            <p class="legend-text">1,000-10,000 acres</p>
-        </li>
-        <li><img src="large-fire.png">
-            <p class="legend-text">10,000+ acres</p>
-        </li>
-    </ul>
+    <div class="legend-types">
+        <ul><p class="legend-title">Markers</p>
+            <br>
+            <li><img src="small-fire.png">
+                <p class="legend-marker-text">
+                    < 1,000 acres</p>
+            </li>
+            <li><img src="medium-fire.png">
+                <p class="legend-marker-text">1,000-10,000 acres</p>
+            </li>
+            <li><img src="large-fire.png">
+                <p class="legend-marker-text">10,000+ acres</p>
+            </li>
+        </ul>
+    </div>
+    <div class="legend-types">
+        <ul style="margin-top: -20px"><p class="legend-title">Perimeters</p>
+            <br>
+            <li>
+                <div id="legend-active"></div>
+                <p class="legend-perimeter-text">Active fire</p>
+            </li>
+            <li>
+                <div id="legend-inactive"></div>
+                <p class="legend-perimeter-text">Inactive fire</p>
+            </li>
+        </ul>
+    </div>
     <div id="map"></div>
-    <p class="credit">Map markers: <a href="https://mapicons.mapsmarker.com/" target="_blank">Maps Icons Collection</a></p>
     <script>
     var activeWildfiresUS2018 = new L.LayerGroup();
     var activeComplexWildfiresUS2018 = new L.LayerGroup();
     var containedWildfiresUS2018 = new L.LayerGroup();
-
-    // var monochromeMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', { attribution: 'Map tiles by <a href="http://stamen.com">stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', subdomains: 'abcd', minZoom: 0, maxZoom: 13, ext: 'png' });
+    var perimeters2018 = new L.LayerGroup();
 
     var terrainMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.{ext}', {
         attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -113,18 +162,20 @@
     var satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     });
+    var monochromeMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', { attribution: 'Map tiles by <a href="http://stamen.com">stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', subdomains: 'abcd', minZoom: 0, maxZoom: 13, ext: 'png' });
 
     var baseLayers = {
-        //"Monochrome map": monochromeMap,
         "Terrain map": terrainMap,
         "Road map": roadMap,
-        "Satellite map": satelliteMap
+        "Satellite map": satelliteMap,
+        "Monochrome map": monochromeMap
     }
 
     var groupedOverlays = {
         "Background": {
             "Active wildfires": activeWildfiresUS2018,
             "Active complexes": activeComplexWildfiresUS2018,
+            "Wildfire perimeters": perimeters2018,
             "All 2018 wildfires": containedWildfiresUS2018
         },
     };
@@ -132,7 +183,7 @@
     var map = L.map('map', {
         center: [37.0119, -105.4842],
         zoom: 6,
-        layers: [terrainMap, activeWildfiresUS2018, activeComplexWildfiresUS2018]
+        layers: [terrainMap, activeWildfiresUS2018, activeComplexWildfiresUS2018, perimeters2018]
     });
     var activeFireIcon = L.icon({
         iconUrl: 'active-fire.png',
@@ -180,12 +231,12 @@
                     marker = L.marker(latlng, { icon: mediumFireIcon })
                 } else(marker = L.marker(latlng, { icon: largeFireIcon }))
                 //var marker = L.marker(latlng, { icon: mediumFireIcon });
-                marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + feature.properties.acres + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
+                marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
                 //var fireSize = Math.sqrt(feature.properties.acres) * .75;
                 return marker;
             },
         }).addTo(activeWildfiresUS2018);
-        console.log(data);
+        //console.log(data);
     });
 
     // THIS MIGHT HELP WITH MARKERS BASED ON SIZE: https://gis.stackexchange.com/questions/227139/custom-marker-and-properties-from-geojson-in-leaflet
@@ -203,7 +254,7 @@
                     marker = L.marker(latlng, { icon: mediumFireIcon })
                 } else(marker = L.marker(latlng, { icon: largeFireIcon }))
                 //var marker = L.marker(latlng, { icon: mediumFireIcon });
-                marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + feature.properties.acres + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
+                marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
                 //var fireSize = Math.sqrt(feature.properties.acres) * .75;
                 return marker;
             }
@@ -224,11 +275,35 @@
                     marker = L.marker(latlng, { icon: containedMediumFireIcon })
                 } else(marker = L.marker(latlng, { icon: containedLargeFireIcon }))
                 //var marker = L.marker(latlng, { icon: mediumFireIcon });
-                marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + feature.properties.acres + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
+                marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
                 //var fireSize = Math.sqrt(feature.properties.acres) * .75;
                 return marker;
             }
         }).addTo(containedWildfiresUS2018);
+        //console.log(data);
+    });
+
+    // Fire perimeters
+    $.getJSON("https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/3/query?where=&text=&objectIds=&time=2018&geometry=&geometryType=esriGeometryPolyline&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson&__ncforminfo=6l0csKPzjIWR7iEqR7vPK7NwWSp4R7b9Gu3DFZDCbs-aXQbh8UazEo-_SRSFx5P-xe2vv54bLIrdLmXSTJsdOMFZh53Za9Y77n3lW4ogEwm8aeVaLZKiXZEjuJMCG0gBgS-GN1XajaNmcy-iKg5ttGGevEWexPZEqWvbMGWLgLUm4okDf0sQg7tX6ERau2tE6Pbi-8UjGNJJAw_RIuT4RMnZoM3-g8PEKgnCXBIn3AGPcxQbS9zT2Ts2d04Fx_DKeD877kyBWkj2EbpvxoRNQg6I-jNUaNgUK8FG1F8m_HazcnECytvYDG__Bwmbxl9YPKmDDd6iD9nmkoOZ3k9FDg_0M24Ah-Box4kroRCtdoWsmJK_zzV4ErqtDylkSYk3tP-dVZaIOFbF29Pc_Dc7j99QvVeWSVEKSSsUv75BuUdCTWh6AZ0yaM36YH8mzRenJTlsXh0fZxxtZfsjhoGEONlI7WqsOP6ZBEPW2ZB6j8CENRoetpj3okBL5YWVc4jI2v8f5AZLiM7KuPyiAkO7B2q6in72XjzdBiKzhX69sVLDqlVYA1jfkU-WUUv_1RLIkhjy5BN_8S4jXrLsjpb-5stObI2yuP72dWIpjsUTN2woRpr_dCLz9kU8DZ5wSpQ_e9Mi83ZITABQ5abVHs18n01Jyd5Z3ncndTCS51Mv9Os8CovloMnesw%3D%3D", function(data) {
+        L.geoJson(data, {
+            style: function(feature) {
+                var fillColor;
+                var color;
+                fireStatus = feature.properties.active;
+                if (fireStatus === 'Y') fillColor = "#c03639", color = "#c03639";
+                else fillColor = "000", color = "#000"; // no data
+                return {
+                    color: color,
+                    weight: 3,
+                    fillColor: fillColor,
+                    fillOpacity: .4
+                };
+            },
+            onEachFeature: function(feature, layer) {
+                var perimeterDate = moment(feature.properties.perimeterdatetime).format('LLL');
+                layer.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.gisacres) + '<br>' + '<span class="update">Updated ' + perimeterDate + '</span>')
+            }
+        }).addTo(perimeters2018);
         //console.log(data);
     });
 
