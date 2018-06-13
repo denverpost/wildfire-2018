@@ -145,7 +145,6 @@
     <div id="map"></div>
     <script>
     var activeWildfiresUS2018 = new L.LayerGroup();
-    var activeComplexWildfiresUS2018 = new L.LayerGroup();
     var containedWildfiresUS2018 = new L.LayerGroup();
     var perimeters2018 = new L.LayerGroup();
 
@@ -164,7 +163,13 @@
     var satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     });
-    var monochromeMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', { attribution: 'Map tiles by <a href="http://stamen.com">stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', subdomains: 'abcd', minZoom: 0, maxZoom: 13, ext: 'png' });
+    var monochromeMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
+        attribution: 'Map tiles by <a href="http://stamen.com">stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        subdomains: 'abcd',
+        minZoom: 0,
+        maxZoom: 13,
+        ext: 'png'
+    });
 
     var baseLayers = {
         "Terrain map": terrainMap,
@@ -176,16 +181,15 @@
     var groupedOverlays = {
         "Background": {
             "Active wildfires": activeWildfiresUS2018,
-            "Active complexes": activeComplexWildfiresUS2018,
             "Wildfire perimeters": perimeters2018,
-            "All 2018 wildfires": containedWildfiresUS2018
+            "Contained wildfires": containedWildfiresUS2018
         },
     };
 
     var map = L.map('map', {
         center: [37.0119, -105.4842],
         zoom: 6,
-        layers: [terrainMap, activeWildfiresUS2018, activeComplexWildfiresUS2018, perimeters2018]
+        layers: [terrainMap, activeWildfiresUS2018, perimeters2018]
     });
     var activeFireIcon = L.icon({
         iconUrl: 'active-fire.png',
@@ -221,24 +225,85 @@
     });
 
     // Active U.S. wildfires in 2018
-    $.getJSON("https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/0/query?where=&text=&objectIds=&time=2018&geometry=&geometryType=esriGeometryPoint&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentsOnly=false&datumTransformation=&parameterValues=&rangeValues=&f=geojson&__ncforminfo=BYBWG9ZU96FKks5_Z7QEHPf7Kd5aFTxqIXrLoradeuG71UO9JBsi9SndV54o9AJgA-WtSGmSBU19XtU-_9xIq8pRAI632DREEt2d8kv0h_I9b0pxF4IGOlWbB4v5upTyORUQXb5Zuh_lGgWPeSekb9SdzgTTrzFMBAUKb1HK-TXw1VQLzFZ5YZ7a3m0mmiJ7c4449BOx5oNCYYBoMbWMxsfV2U3_D2k8D3bVBr_VVeqYwM4pYIzcjus4_qrp5NdEgJ5ZgEVvdAUwHUDa6kyTOkGSVAR9pusNYyN0JOomGYD13kguQK2rxWWaJwBBmBNfIQYRrMbxbpchpOWt3V2tQ9qyrcvuS4d3DDzAUmtT2or2nPqLTf5LFYJtbJHAWiAHFZgj4km3HT0WwoxD9St3Xtr8BN1OPYNB7Q9loyujS8uQ7G9l_lpCfm7cy4GjhCHf-45oYJbt-YYeC15ypLQAYVIBGONZu66ATmkxTW7BAYvfannRzykDoHp-XR7vngUcrGZiYimCCUEpm8nhxkom-Mr5g2m5vAO3lVBxe6lLOOD_Yfhy0lnhWECBDC4H22aTn8zbPV4RIivoHQKvOVEdClMoOwTkHpGeskCPZhVpiYbjoVVUbIPJmAWM3w00apvLOtQ9iNW6zH8Gx5pVroOD8O4dv2ebxQtyZnqDZPu6LDmA8WRFlqKBDA%3D%3D", function(data) {
+    $.getJSON("//extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json", function(data) {
         L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
                 var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
                 var updateDate = moment(feature.properties.reportdatetime).format('LLL');
+                var popupFooter;
+                var linkExists = !!feature.properties.iw_link;
+
+                if (linkExists == true) {
+                    popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
+                } else {
+                    popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
+                };
                 var marker;
-                if (feature.properties.acres < 1000) {
-                    marker = L.marker(latlng, { icon: smallFireIcon })
-                } else if (feature.properties.acres < 10000) {
-                    marker = L.marker(latlng, { icon: mediumFireIcon })
-                } else(marker = L.marker(latlng, { icon: largeFireIcon }))
-                //var marker = L.marker(latlng, { icon: mediumFireIcon });
-                marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + '<span class="update">Updated ' + updateDate + '</span>');
-                //var fireSize = Math.sqrt(feature.properties.acres) * .75;
-                return marker;
+                if (feature.properties.is_active == true) {
+                    if (feature.properties.acres < 1000) {
+                        marker = L.marker(latlng, { icon: smallFireIcon })
+                    } else if (feature.properties.acres < 10000) {
+                        marker = L.marker(latlng, { icon: mediumFireIcon })
+                    } else(marker = L.marker(latlng, { icon: largeFireIcon }))
+                    //var marker = L.marker(latlng, { icon: mediumFireIcon });
+                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
+                    return marker;
+                }
             },
         }).addTo(activeWildfiresUS2018);
-        //console.log(data);
+    });
+
+    // Contained U.S. wildfires in 2018
+    $.getJSON("//extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json", function(data) {
+        L.geoJson(data, {
+            pointToLayer: function(feature, latlng) {
+                var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
+                var updateDate = moment(feature.properties.reportdatetime).format('LLL');
+                // var containedDate = moment(feature.properties.containmentdatetime).format('LL');
+                var popupFooter;
+                var linkExists = !!feature.properties.iw_link;
+
+                if (linkExists == true) {
+                    popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
+                } else {
+                    popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
+                };
+                var marker;
+                if (feature.properties.is_active == false) {
+                    if (feature.properties.acres < 1000) {
+                        marker = L.marker(latlng, { icon: containedSmallFireIcon })
+                    } else if (feature.properties.acres < 10000) {
+                        marker = L.marker(latlng, { icon: containedMediumFireIcon })
+                    } else(marker = L.marker(latlng, { icon: containedLargeFireIcon }))
+                    //var marker = L.marker(latlng, { icon: mediumFireIcon });
+                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
+                    return marker;
+                }
+            },
+        }).addTo(containedWildfiresUS2018);
+    });
+
+    // All 2018 fire perimeters
+    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims.json", function(data) {
+        L.geoJson(data, {
+            style: function(feature) {
+                var fillColor;
+                var color;
+                fireStatus = feature.properties.active;
+                if (fireStatus === 'Y') fillColor = "#c03639", color = "#c03639";
+                else fillColor = "000", color = "#000"; // no data
+                return {
+                    color: color,
+                    weight: 3,
+                    fillColor: fillColor,
+                    fillOpacity: .4
+                };
+            },
+            onEachFeature: function(feature, layer) {
+                var perimeterDate = moment(feature.properties.perimeterdatetime).format('LLL');
+                layer.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.gisacres) + '<br>' + '<span class="update">Updated ' + perimeterDate + '</span>')
+            }
+        }).addTo(perimeters2018);
     });
     L.control.groupedLayers(baseLayers, groupedOverlays).addTo(map);
     </script>
