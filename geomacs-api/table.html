@@ -7,9 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed:700|Roboto+Mono" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="" />
+    <link href="//datatables.net/download/build/nightly/jquery.dataTables.css" rel="stylesheet" type="text/css" />
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
     <script src="//extras.denverpost.com/app/homicide-report/js/leaflet-grouped-layer-control.js"></script>
+    <script src="//datatables.net/download/build/nightly/jquery.dataTables.js"></script>
     <script src="moment.js"></script>
     <style>
     html,
@@ -143,10 +145,14 @@
         </ul>
     </div>
     <div id="map"></div>
+    <div class="container">
+        <table id="example" class="display" width="100%">
+        </table>
+    </div>
     <script>
     var activeWildfiresUS2018 = new L.LayerGroup();
     var containedWildfiresUS2018 = new L.LayerGroup();
-    var perimeters2018 = new L.LayerGroup();
+    //var perimeters2018 = new L.LayerGroup();
 
     var terrainMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.{ext}', {
         attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -181,7 +187,7 @@
     var groupedOverlays = {
         "Background": {
             "Active wildfires": activeWildfiresUS2018,
-            "Wildfire perimeters": perimeters2018,
+            //"Wildfire perimeters": perimeters2018,
             "Contained wildfires": containedWildfiresUS2018
         },
     };
@@ -189,7 +195,7 @@
     var map = L.map('map', {
         center: [37.0119, -105.4842],
         zoom: 6,
-        layers: [terrainMap, activeWildfiresUS2018, perimeters2018]
+        layers: [terrainMap, activeWildfiresUS2018 /*perimeters2018*/ ]
     });
     var activeFireIcon = L.icon({
         iconUrl: 'active-fire.png',
@@ -280,30 +286,61 @@
                 }
             },
         }).addTo(containedWildfiresUS2018);
-    };
+
+        //TABLE
+        var GeoJSON = JSON.stringify(data);
+        //console.log(GeoJSON);
+        // var columns = [];
+        // tableData = JSON.parse(GeoJSON);
+        // //console.log(tableData);
+        // columnNames = Object.keys(tableData[0]); //get columns under features
+        // //console.log(columnNames);
+        // for (var i in columnNames) {
+        //     if (Object.getPrototypeOf(tableData[0][columnNames[i]]) === Object.prototype) { //if column is object loop to get all nested column names
+        //         var nested = Object.keys(tableData[0][columnNames[i]]);
+        //         for (var j in nested) { //column data is object name + nested name, example geometry.type
+        //             columns.push({ data: columnNames[i] + '.' + nested[j], title: columnNames[i] + '.' + nested[j] });
+        //         }
+        //     } else { //otherwise the data is just the name
+        //         columns.push({ data: columnNames[i], title: columnNames[i] });
+        //     }
+        // }
+        //console.log(columns);
+        //console.log(data.features);
+        var columns = [];
+        tableData = JSON.parse(GeoJSON);
+        var prop = tableData[0].properties;
+        for (var i in prop) {
+            columns.push({ data: 'properties.' + i, title: i });
+        }
+        $('#example').DataTable({
+            data: tableData, //get the data under features
+            columns: columns
+        });
+    }
 
     // All 2018 fire perimeters
-    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims.json", function(data) {
-        L.geoJson(data, {
-            style: function(feature) {
-                var fillColor;
-                var color;
-                fireStatus = feature.properties.active;
-                if (fireStatus === 'Y') fillColor = "#c03639", color = "#c03639";
-                else fillColor = "000", color = "#000"; // no data
-                return {
-                    color: color,
-                    weight: 3,
-                    fillColor: fillColor,
-                    fillOpacity: .4
-                };
-            },
-            onEachFeature: function(feature, layer) {
-                var perimeterDate = moment(feature.properties.perimeterdatetime).format('LLL');
-                layer.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.gisacres) + '<br>' + '<span class="update">Updated ' + perimeterDate + '</span>')
-            }
-        }).addTo(perimeters2018);
-    });
+    // $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims.json", function(data) {
+    //     L.geoJson(data, {
+    //         style: function(feature) {
+    //             var fillColor;
+    //             var color;
+    //             fireStatus = feature.properties.active;
+    //             if (fireStatus === 'Y') fillColor = "#c03639", color = "#c03639";
+    //             else fillColor = "000", color = "#000"; // no data
+    //             return {
+    //                 color: color,
+    //                 weight: 3,
+    //                 fillColor: fillColor,
+    //                 fillOpacity: .4
+    //             };
+    //         },
+    //         onEachFeature: function(feature, layer) {
+    //             var perimeterDate = moment(feature.properties.perimeterdatetime).format('LLL');
+    //             layer.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.gisacres) + '<br>' + '<span class="update">Updated ' + perimeterDate + '</span>')
+    //         }
+    //     }).addTo(perimeters2018);
+    // });
     L.control.groupedLayers(baseLayers, groupedOverlays).addTo(map);
     </script>
 </body>
