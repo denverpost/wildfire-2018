@@ -224,7 +224,7 @@
         iconSize: [20, 20]
     });
 
-    $.getJSON("json-test.json", getData);
+    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json", getData);
 
     function getData(data) {
         L.geoJson(data, {
