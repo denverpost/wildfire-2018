@@ -16,6 +16,7 @@
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.foundation.min.js"></script>
     <script src="https://cdn.jsdelivr.net/foundation/6.2.4/foundation.min.js"></script>
     <script src="moment.js"></script>
+    <script src="//cdn.datatables.net/plug-ins/1.10.16/dataRender/datetime.js"></script>
     <style>
     html,
     body {
@@ -150,7 +151,7 @@
     </div>
     <div id="map"></div>
     <div class="container">
-        <table id="example" class="display" width="100%">
+        <table id="wildfire-table" class="display" width="100%">
         </table>
     </div>
     <script>
@@ -234,98 +235,161 @@
         iconSize: [20, 20]
     });
 
-    $.getJSON("json-test.json", getData);
 
-    function getData(data) {
-        L.geoJson(data, {
-            pointToLayer: function(feature, latlng) {
-                var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
-                var updateDate = moment(feature.properties.reportdatetime).format('LLL');
-                var popupFooter;
-                var linkExists = !!feature.properties.iw_link;
+    $(document).ready(function() {
+        $.getJSON("json-test.json", getData);
 
-                if (linkExists == true) {
-                    popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
-                } else {
-                    popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
-                };
-                var marker;
-                if (feature.properties.is_active == true) {
-                    if (feature.properties.acres < 1000) {
-                        marker = L.marker(latlng, { icon: smallFireIcon })
-                    } else if (feature.properties.acres < 10000) {
-                        marker = L.marker(latlng, { icon: mediumFireIcon })
-                    } else(marker = L.marker(latlng, { icon: largeFireIcon }))
-                    //var marker = L.marker(latlng, { icon: mediumFireIcon });
-                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
-                    return marker;
-                }
-            },
-        }).addTo(activeWildfiresUS2018);
+        function getData(data) {
+            L.geoJson(data, {
+                pointToLayer: function(feature, latlng) {
+                    var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
+                    var updateDate = moment(feature.properties.reportdatetime).format('LLL');
+                    var popupFooter;
+                    var linkExists = !!feature.properties.iw_link;
 
-        // Contained U.S. wildfires in 2018
-        L.geoJson(data, {
-            pointToLayer: function(feature, latlng) {
-                var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
-                var updateDate = moment(feature.properties.reportdatetime).format('LLL');
-                // var containedDate = moment(feature.properties.containmentdatetime).format('LL');
-                var popupFooter;
-                var linkExists = !!feature.properties.iw_link;
-
-                if (linkExists == true) {
-                    popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
-                } else {
-                    popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
-                };
-                var marker;
-                if (feature.properties.is_active == false) {
-                    if (feature.properties.acres < 1000) {
-                        marker = L.marker(latlng, { icon: containedSmallFireIcon })
-                    } else if (feature.properties.acres < 10000) {
-                        marker = L.marker(latlng, { icon: containedMediumFireIcon })
-                    } else(marker = L.marker(latlng, { icon: containedLargeFireIcon }))
-                    //var marker = L.marker(latlng, { icon: mediumFireIcon });
-                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
-                    return marker;
-                }
-            },
-        }).addTo(containedWildfiresUS2018);
-
-        //TABLE
-        //var GeoJSON = JSON.stringify(data);
-        //var columns = [];
-        //var tableData = JSON.parse(GeoJSON);
-        // var prop = tableData[0].properties;
-        // for (var i in prop) {
-        //     columns.push({ data: 'properties.' + i, title: i });
-        // }
-        var columns;
-        $('#example').dataTable({
-            "data": data, //get the data under features
-            "columns": [{
-                    "data": "properties.incidentname",
-                    "title": "Fire name"
+                    if (linkExists == true) {
+                        popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
+                    } else {
+                        popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
+                    };
+                    var marker;
+                    if (feature.properties.is_active == true) {
+                        if (feature.properties.acres < 1000) {
+                            marker = L.marker(latlng, { icon: smallFireIcon })
+                        } else if (feature.properties.acres < 10000) {
+                            marker = L.marker(latlng, { icon: mediumFireIcon })
+                        } else(marker = L.marker(latlng, { icon: largeFireIcon }))
+                        //var marker = L.marker(latlng, { icon: mediumFireIcon });
+                        marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
+                        return marker;
+                    }
                 },
-                {
-                    "data": "properties.state",
-                    "title": "State"
+            }).addTo(activeWildfiresUS2018);
+
+            // Contained U.S. wildfires in 2018
+            L.geoJson(data, {
+                pointToLayer: function(feature, latlng) {
+                    var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
+                    var updateDate = moment(feature.properties.reportdatetime).format('LLL');
+                    // var containedDate = moment(feature.properties.containmentdatetime).format('LL');
+                    var popupFooter;
+                    var linkExists = !!feature.properties.iw_link;
+
+                    if (linkExists == true) {
+                        popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
+                    } else {
+                        popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
+                    };
+                    var marker;
+                    if (feature.properties.is_active == false) {
+                        if (feature.properties.acres < 1000) {
+                            marker = L.marker(latlng, { icon: containedSmallFireIcon })
+                        } else if (feature.properties.acres < 10000) {
+                            marker = L.marker(latlng, { icon: containedMediumFireIcon })
+                        } else(marker = L.marker(latlng, { icon: containedLargeFireIcon }))
+                        //var marker = L.marker(latlng, { icon: mediumFireIcon });
+                        marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
+                        return marker;
+                    }
                 },
-                {
-                    "data": "properties.acres",
-                    "title": "Acres"
-                },
-                {
-                    "data": "properties.percentcontained",
-                    "title": "Contained"
-                },
-                {
-                    "data": "properties.firecause",
-                    "title": "Cause"
-                }
-            ]
-        });
-        console.log(columns);
-    }
+            }).addTo(containedWildfiresUS2018);
+
+            //TABLE
+            //var GeoJSON = JSON.stringify(data);
+            //var columns = [];
+            //var tableData = JSON.parse(GeoJSON);
+            // var prop = tableData[0].properties;
+            // for (var i in prop) {
+            //     columns.push({ data: 'properties.' + i, title: i });
+            // }
+            var renderer = $.fn.dataTable.render.moment("x", "MMM D");
+            $('#wildfire-table').dataTable({
+                "data": data,
+                "order": [
+                    [4, "desc"]
+                ],
+                "columnDefs": [{
+                        "type": "html",
+                        "targets": 0
+                    },
+                    {
+                        "type": "html",
+                        "targets": 1
+                    },
+                    {
+                        "type": "num",
+                        "targets": 2
+                    },
+                    {
+                        "type": "num",
+                        "targets": 3
+                    },
+                    {
+                        "type": "datetime",
+                        "targets": 4,
+                        "render": $.fn.dataTable.render.moment("x", "MMM D")
+                    },
+                    {
+                        "type": "datetime",
+                        "targets": 5
+                        //"render": $.fn.dataTable.render.moment("x", "MMM D")
+                    },
+                    {
+                        "type": "html",
+                        "targets": 6
+                    }
+                ],
+                "columns": [{
+                        "data": "properties.incidentname",
+                        "title": "Fire name"
+                    },
+                    {
+                        "data": "properties.state",
+                        "title": "State"
+                    },
+                    {
+                        "data": "properties.acres",
+                        "title": "Acres",
+                    },
+                    {
+                        "data": "properties.percentcontained",
+                        "title": "Contained"
+                    },
+                    {
+                        "data": "properties.firediscoverydatetime",
+                        "title": "Started"
+                        // "type": "datetime",
+                        // "render": $.fn.dataTable.render.moment("x", "MMM D")
+                    },
+                    {
+                        "data": "properties.containmentdatetime",
+                        "title": "Ended",
+                        "render": function(data, type, row) {
+                            if (data != null) {
+                                return renderer(data, type, row)
+                            } else {
+                                return "&mdash;"
+                            }
+                        }
+                        // "render": function(data, type, row) {
+                        // 	console.log(row);
+                        //     if (data != null) {
+                        //         return data
+                        //     } else {
+                        //         return "No date";
+                        //     }
+                        // },
+                        // "type": "datetime",
+                        // "render": $.fn.dataTable.render.moment("x", "MMM D"),
+                    },
+                    {
+                        "data": "properties.firecause",
+                        "title": "Cause"
+                    }
+                ]
+            });
+        }
+    });
 
     // All 2018 fire perimeters
     // $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims.json", function(data) {
