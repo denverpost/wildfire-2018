@@ -224,8 +224,12 @@
         iconSize: [20, 20]
     });
 
+    // Manually added fires
+    L.marker([39.625579999999999, -106.1103], { icon: smallFireIcon }).addTo(activeWildfiresUS2018).bindPopup('<h3 class="fire-name">' + 'Buffalo' + '</h3><br>' + 'Acres: ' + '91' + '<br>' + 'Contained: ' + '20' + '%' + '<br>' + 'Started: ' + 'June 12, 2018' + '<br>' + 'Cause: ' + 'Unknown' + '<br>' + '<span class="update"><a href="' + 'https://inciweb.nwcg.gov/incident/5841/' + '" target="_blank">Fire details</a> &bull; Updated<br>' + 'June 14, 2018 7:08 AM' + '</span>');
+
     $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json", getData);
 
+    // Active U.S. wildfires in 2018
     function getData(data) {
         L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
@@ -233,6 +237,10 @@
                 var updateDate = moment(feature.properties.reportdatetime).format('LLL');
                 var popupFooter;
                 var linkExists = !!feature.properties.iw_link;
+
+                // if (feature.properties.incidentname == 'BUFFALO') {
+                //     feature.properties.is_active == true
+                // };
 
                 if (linkExists == true) {
                     popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'

@@ -358,7 +358,10 @@
                     },
                     {
                         "data": "properties.percentcontained",
-                        "title": "Contained"
+                        "title": "Contained",
+                        "render": function(data, type, row) {
+                            return data + '%'
+                        }
                     },
                     {
                         "data": "properties.firediscoverydatetime",
