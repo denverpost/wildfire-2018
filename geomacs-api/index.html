@@ -225,7 +225,7 @@
     });
 
     // Manually added fires
-    L.marker([39.625579999999999, -106.1103], { icon: smallFireIcon }).addTo(activeWildfiresUS2018).bindPopup('<h3 class="fire-name">' + 'Buffalo' + '</h3><br>' + 'Acres: ' + '91' + '<br>' + 'Contained: ' + '20' + '%' + '<br>' + 'Started: ' + 'June 12, 2018' + '<br>' + 'Cause: ' + 'Unknown' + '<br>' + '<span class="update"><a href="' + 'https://inciweb.nwcg.gov/incident/5841/' + '" target="_blank">Fire details</a> &bull; Updated<br>' + 'June 14, 2018 7:08 AM' + '</span>');
+    // L.marker([39.625579999999999, -106.1103], { icon: smallFireIcon }).addTo(activeWildfiresUS2018).bindPopup('<h3 class="fire-name">' + 'Buffalo' + '</h3><br>' + 'Acres: ' + '91' + '<br>' + 'Contained: ' + '20' + '%' + '<br>' + 'Started: ' + 'June 12, 2018' + '<br>' + 'Cause: ' + 'Unknown' + '<br>' + '<span class="update"><a href="' + 'https://inciweb.nwcg.gov/incident/5841/' + '" target="_blank">Fire details</a> &bull; Updated<br>' + 'June 14, 2018 7:08 AM' + '</span>');
 
     $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json", getData);
 
@@ -237,25 +237,29 @@
                 var updateDate = moment(feature.properties.reportdatetime).format('LLL');
                 var popupFooter;
                 var linkExists = !!feature.properties.iw_link;
-
-                // if (feature.properties.incidentname == 'BUFFALO') {
-                //     feature.properties.is_active == true
-                // };
-
+                // Date difference
+                var oneDay = 24 * 60 * 60 * 1000;
+                var todayDate = Date.now();
+                var reportDate = feature.properties.reportdatetime;
+                var diffDays = Math.round(Math.abs((todayDate - reportDate) / (oneDay)));
+                // console.log(diffDays);
+                var pctContained = feature.properties.percentcontained;
+                var acres = feature.properties.acres;
                 if (linkExists == true) {
                     popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
                 } else {
                     popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
                 };
                 var marker;
-                if (feature.properties.is_active == true) {
-                    if (feature.properties.acres < 1000) {
+                //if (feature.properties.is_active == true) {
+                if (pctContained < 100 && diffDays < 14) {
+                    if (acres < 1000) {
                         marker = L.marker(latlng, { icon: smallFireIcon })
-                    } else if (feature.properties.acres < 10000) {
+                    } else if (acres < 10000) {
                         marker = L.marker(latlng, { icon: mediumFireIcon })
                     } else(marker = L.marker(latlng, { icon: largeFireIcon }))
                     //var marker = L.marker(latlng, { icon: mediumFireIcon });
-                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
+                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter + '<br>' + feature.properties.is_active);
                     return marker;
                 }
             },
