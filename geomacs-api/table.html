@@ -35,9 +35,7 @@
         </table>
     </div>
     <script>
-    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json", getData);
-
-    function getData(data) {
+    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json", function(data) {
         var renderer = $.fn.dataTable.render.moment("x", "MMM D");
         $('#wildfire-table').dataTable({
             "data": data,
@@ -122,8 +120,22 @@
                     "title": "Cause"
                 }
             ]
-        });
-    }
+        })
+        //console.log(data[0].properties.incidentname);
+        var sum = 0;
+        // for (var i = 0; i < data.length; i++) {
+        //     if (data[i].properties.percentcontained < 100) {
+        //         sum += data[i].properties.acres
+        //     }
+        // }
+        for (var i = 0; i < data.length; i++) {
+        	if (data[i].properties.firediscoverydatetime === (Date.now() - (86400000*2))) {
+        		sum += data[i].properties.acres
+        	}
+        }
+        console.log(sum);
+        console.log(Date.now());
+    });
     $(document).foundation();
     </script>
 </body>

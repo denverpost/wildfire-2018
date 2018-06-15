@@ -259,7 +259,7 @@
                         marker = L.marker(latlng, { icon: mediumFireIcon })
                     } else(marker = L.marker(latlng, { icon: largeFireIcon }))
                     //var marker = L.marker(latlng, { icon: mediumFireIcon });
-                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter + '<br>' + feature.properties.is_active);
+                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
                     return marker;
                 }
             },
