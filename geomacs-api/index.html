@@ -191,10 +191,6 @@
         zoom: 6,
         layers: [terrainMap, activeWildfiresUS2018, perimeters2018]
     });
-    var activeFireIcon = L.icon({
-        iconUrl: 'active-fire.png',
-        iconSize: [35, 35]
-    });
     var smallFireIcon = L.icon({
         iconUrl: 'small-fire.png',
         iconSize: [35, 35]
@@ -219,10 +215,6 @@
         iconUrl: 'large-fire.png',
         iconSize: [25, 25]
     });
-    var containedFireIcon = L.icon({
-        iconUrl: 'contained-fire.png',
-        iconSize: [20, 20]
-    });
 
     // Manually added fires
     // L.marker([39.625579999999999, -106.1103], { icon: smallFireIcon }).addTo(activeWildfiresUS2018).bindPopup('<h3 class="fire-name">' + 'Buffalo' + '</h3><br>' + 'Acres: ' + '91' + '<br>' + 'Contained: ' + '20' + '%' + '<br>' + 'Started: ' + 'June 12, 2018' + '<br>' + 'Cause: ' + 'Unknown' + '<br>' + '<span class="update"><a href="' + 'https://inciweb.nwcg.gov/incident/5841/' + '" target="_blank">Fire details</a> &bull; Updated<br>' + 'June 14, 2018 7:08 AM' + '</span>');
@@ -242,24 +234,27 @@
                 var todayDate = Date.now();
                 var reportDate = feature.properties.reportdatetime;
                 var diffDays = Math.round(Math.abs((todayDate - reportDate) / (oneDay)));
-                // console.log(diffDays);
                 var pctContained = feature.properties.percentcontained;
-                var acres = feature.properties.acres;
+                var acres = Math.round(feature.properties.acres);
+                // const acres = (x) => {
+                //     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                // }
+                // console.log(acresWithCommas);
+                var marker;
+
                 if (linkExists == true) {
                     popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
                 } else {
                     popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
                 };
-                var marker;
-                //if (feature.properties.is_active == true) {
+
                 if (pctContained < 100 && diffDays < 14) {
                     if (acres < 1000) {
                         marker = L.marker(latlng, { icon: smallFireIcon })
                     } else if (acres < 10000) {
                         marker = L.marker(latlng, { icon: mediumFireIcon })
                     } else(marker = L.marker(latlng, { icon: largeFireIcon }))
-                    //var marker = L.marker(latlng, { icon: mediumFireIcon });
-                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
+                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + acres.toLocaleString() + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
                     return marker;
                 }
             },
@@ -270,24 +265,25 @@
             pointToLayer: function(feature, latlng) {
                 var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
                 var updateDate = moment(feature.properties.reportdatetime).format('LLL');
-                // var containedDate = moment(feature.properties.containmentdatetime).format('LL');
                 var popupFooter;
                 var linkExists = !!feature.properties.iw_link;
+                var pctContained = feature.properties.percentcontained;
+                var acres = Math.round(feature.properties.acres);
+                var marker;
 
                 if (linkExists == true) {
                     popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
                 } else {
                     popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
                 };
-                var marker;
-                if (feature.properties.is_active == false) {
-                    if (feature.properties.acres < 1000) {
+
+                if (pctContained === 100) {
+                    if (acres < 1000) {
                         marker = L.marker(latlng, { icon: containedSmallFireIcon })
-                    } else if (feature.properties.acres < 10000) {
+                    } else if (acres < 10000) {
                         marker = L.marker(latlng, { icon: containedMediumFireIcon })
                     } else(marker = L.marker(latlng, { icon: containedLargeFireIcon }))
-                    //var marker = L.marker(latlng, { icon: mediumFireIcon });
-                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.acres) + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
+                    marker.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + acres.toLocaleString() + '<br>' + 'Contained: ' + feature.properties.percentcontained + '%' + '<br>' + 'Started: ' + discoveryDate + '<br>' + 'Cause: ' + feature.properties.firecause + '<br>' + popupFooter);
                     return marker;
                 }
             },
@@ -312,7 +308,7 @@
             },
             onEachFeature: function(feature, layer) {
                 var perimeterDate = moment(feature.properties.perimeterdatetime).format('LLL');
-                layer.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.gisacres) + '<br>' + '<span class="update">Updated ' + perimeterDate + '</span>')
+                layer.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.gisacres).toLocaleString() + '<br>' + '<span class="update">Updated ' + perimeterDate + '</span>')
             }
         }).addTo(perimeters2018);
     });
