@@ -267,6 +267,11 @@
                 var updateDate = moment(feature.properties.reportdatetime).format('LLL');
                 var popupFooter;
                 var linkExists = !!feature.properties.iw_link;
+                // Date difference
+                var oneDay = 24 * 60 * 60 * 1000;
+                var todayDate = Date.now();
+                var reportDate = feature.properties.reportdatetime;
+                var diffDays = Math.round(Math.abs((todayDate - reportDate) / (oneDay)));
                 var pctContained = feature.properties.percentcontained;
                 var acres = Math.round(feature.properties.acres);
                 var marker;
@@ -277,7 +282,7 @@
                     popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
                 };
 
-                if (pctContained === 100) {
+                if (pctContained === 100 || pctContained < 100 && diffDays >= 14) {
                     if (acres < 1000) {
                         marker = L.marker(latlng, { icon: containedSmallFireIcon })
                     } else if (acres < 10000) {
