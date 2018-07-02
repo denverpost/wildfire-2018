@@ -50,11 +50,11 @@
                 [4, "desc"]
             ],
             "columnDefs": [{
-                    "type": "html",
+                    "type": "string",
                     "targets": 0
                 },
                 {
-                    "type": "html",
+                    "type": "string",
                     "targets": 1
                 },
                 {
@@ -77,11 +77,10 @@
                 //     //"render": $.fn.dataTable.render.moment("x", "MMM D")
                 // },
                 {
-                    "type": "html",
+                    "type": "string",
                     "targets": 5
-                },
-                {
-                    "type": "html",
+                }, {
+                    "type": "string",
                     "targets": 6,
                     "visible": false
                 }
@@ -89,11 +88,11 @@
             "columns": [{
                     "data": "properties.incidentname",
                     "title": "Fire name",
-                    "render": function(data, type, row) {
-                        if (row["iw_link"]) {
-                            return '<a href="' + row["iw_link"] + '" target="_blank">' + data + '</a>'
-                        } else {
+                    "render": function(data, type, row, meta) {
+                        if (typeof row.properties.iw_link === "undefined") {
                             return data
+                        } else {
+                            return data = '<a href="' + row.properties.iw_link + '" target="_blank">' + data + '</a>'
                         }
                     }
                 },
@@ -108,7 +107,7 @@
                 {
                     "data": "properties.percentcontained",
                     "title": "Contained",
-                    "render": function(data, type, row) {
+                    "render": function(data, type, row, meta) {
                         return data + '%'
                     }
                 },
@@ -134,7 +133,9 @@
                     "title": "Cause"
                 },
                 {
-                    "data": "iw_link"
+                    "data": "properties.iw_link",
+                    "title": "Link",
+                    "defaultContent": ""
                 }
             ]
         })
@@ -152,8 +153,6 @@
         }
         // console.log(sum);
         // console.log(Date.now());
-
-        console.log(data);
     });
     $(document).foundation();
     </script>
