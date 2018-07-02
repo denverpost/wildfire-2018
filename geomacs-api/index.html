@@ -144,6 +144,13 @@
     </div>
     <div id="map"></div>
     <script>
+    // VERSIONING FOR BROWSER CACHE
+    function vSec() {
+        var dt = new Date();
+        var secs = dt.getSeconds() + (60 * dt.getMinutes());
+        return secs;
+    }
+
     var activeWildfiresUS2018 = new L.LayerGroup();
     var containedWildfiresUS2018 = new L.LayerGroup();
     var perimeters2018 = new L.LayerGroup();
@@ -216,33 +223,29 @@
         iconSize: [25, 25]
     });
 
-    // Manually added fires
+    // MANUALLY ADD FIRES
     // L.marker([39.625579999999999, -106.1103], { icon: smallFireIcon }).addTo(activeWildfiresUS2018).bindPopup('<h3 class="fire-name">' + 'Buffalo' + '</h3><br>' + 'Acres: ' + '91' + '<br>' + 'Contained: ' + '20' + '%' + '<br>' + 'Started: ' + 'June 12, 2018' + '<br>' + 'Cause: ' + 'Unknown' + '<br>' + '<span class="update"><a href="' + 'https://inciweb.nwcg.gov/incident/5841/' + '" target="_blank">Fire details</a> &bull; Updated<br>' + 'June 14, 2018 7:08 AM' + '</span>');
 
-    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json", getData);
+    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json?v='+vSec()", getData);
 
-    // Active U.S. wildfires in 2018
+    // ACTIVE U.S. WILDFIRES IN 2018
     function getData(data) {
         L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
                 var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
                 var updateDate = moment(feature.properties.reportdatetime).format('LLL');
                 var popupFooter;
-                var linkExists = !!feature.properties.iw_link;
-                // Date difference
+                var linkExists = (typeof feature.properties.iw_link !== 'undefined') ? true : false;
+                // DATE DIFFERENCE
                 var oneDay = 24 * 60 * 60 * 1000;
                 var todayDate = Date.now();
                 var reportDate = feature.properties.reportdatetime;
                 var diffDays = Math.round(Math.abs((todayDate - reportDate) / (oneDay)));
                 var pctContained = feature.properties.percentcontained;
                 var acres = Math.round(feature.properties.acres);
-                // const acres = (x) => {
-                //     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                // }
-                // console.log(acresWithCommas);
                 var marker;
 
-                if (linkExists == true) {
+                if (linkExists === true) {
                     popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
                 } else {
                     popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
@@ -260,14 +263,14 @@
             },
         }).addTo(activeWildfiresUS2018);
 
-        // Contained U.S. wildfires in 2018
+        // CONTAINED U.S. WILDFIRES IN 2018
         L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
                 var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
                 var updateDate = moment(feature.properties.reportdatetime).format('LLL');
                 var popupFooter;
-                var linkExists = !!feature.properties.iw_link;
-                // Date difference
+                var linkExists = (typeof feature.properties.iw_link !== 'undefined') ? true : false;
+                // DATE DIFFERENCE
                 var oneDay = 24 * 60 * 60 * 1000;
                 var todayDate = Date.now();
                 var reportDate = feature.properties.reportdatetime;
@@ -276,7 +279,7 @@
                 var acres = Math.round(feature.properties.acres);
                 var marker;
 
-                if (linkExists == true) {
+                if (linkExists === true) {
                     popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
                 } else {
                     popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
@@ -295,7 +298,7 @@
         }).addTo(containedWildfiresUS2018);
     };
 
-    // All 2018 fire perimeters
+    // All 2018 FIRE PERIMETERS
     $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims.json", function(data) {
         L.geoJson(data, {
             style: function(feature) {
