@@ -142,11 +142,6 @@
             </li>
         </ul>
     </div>
-    <form>
-        <select id="fireDropdown">
-            <option>Choose a fire</option>
-        </select>
-    </form>
     <div id="map"></div>
     <script>
     // VERSIONING FOR BROWSER CACHE
@@ -229,12 +224,6 @@
         iconSize: [25, 25]
     });
 
-    activeFireNames = [];
-    activeFireLat = [];
-    activeFireLong = [];
-    activeFireID = [];
-    //var selectFire = document.getElementById("selectFire");
-
     var circle = L.circle([37.0119, -105.4842], {
         radius: 3590,
         color: 'blue',
@@ -264,13 +253,6 @@
     function getData(data) {
         L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
-                // activeFireNames = []; //define an array to store coordinates
-                //onEachFeature: function(feature, layer) {
-                //popupOptions = { maxWidth: 200 };
-                //layer.bindPopup(feature.properties.popupContent);
-                //activeFireNames.push(feature.properties.incidentname);
-                //}
-
                 var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
                 var updateDate = moment(feature.properties.reportdatetime).format('LLL');
                 var popupFooter;
@@ -284,27 +266,10 @@
                 var acres = Math.round(feature.properties.acres);
                 var marker;
 
-                //function updateDropdown(control) {
-                // var e = document.getElementById('fireDropdown');
-                // var dropdownName = e.options[e.selectedIndex].text;
-                // console.log(dropdownName);
-                // addEventListener('click', function(dropdownName) {
-                //      map.flyTo([feature.geometry[1], feature.geometry[0]], 15, {
-                //        animate: true,
-                //      duration: 4
-                //});
-                //}
-                //};
-                //}
-
                 if (linkExists === true) {
                     popupFooter = '<span class="update"><a href="' + feature.properties.iw_link + '" target="_blank">Fire details</a> &bull; Updated<br>' + updateDate + '</span>'
                 } else {
                     popupFooter = '<span class="update">Updated ' + updateDate + '</span>'
-                };
-
-                if (pctContained < 100 && diffDays < 14) {
-                    activeFireNames.push(feature.properties.incidentname) && activeFireID.push(feature.id) && activeFireLat.push(feature.geometry.coordinates[1]) && activeFireLong.push(feature.geometry.coordinates[0]);
                 };
 
                 if (pctContained < 100 && diffDays < 14) {
@@ -318,20 +283,6 @@
                 }
             }
         }).addTo(activeWildfiresUS2018);
-
-        // POPULATE DROPDOWN WITH ACTIVE FIRE NAMES AND IDS
-        for (var i = 0; i < activeFireNames.length; i++) {
-            var opt = activeFireNames[i];
-            var val = activeFireID[i];
-            var lat = activeFireLat[i];
-            var long = activeFireLong[i];
-            var el = document.createElement("option");
-            el.textContent = opt;
-            el.value = val;
-            fireDropdown.appendChild(el);
-            console.log(val);
-        };
-
 
         // CONTAINED U.S. WILDFIRES IN 2018
         L.geoJson(data, {
