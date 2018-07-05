@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <title>Wildfires size comparator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel='stylesheet' id='mason-fonts-css'  href='https://fonts.googleapis.com/css?family=Source+Serif+Pro%3A400%2C400italic%2C600%2C600italic%2C700%2C700italic%7CSource+Sans+Pro%3A400%2C400italic%2C600%2C600italic%2C700%2C400italic&#038;ver=4.9.6' type='text/css' media='all' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="moment.js"></script>
+    <script type="text/javascript" src="https://extras.denverpost.com/media/js/jquery/chosen/1.0/chosen.jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://extras.denverpost.com/media/js/jquery/chosen/1.0/chosen.min.css" />
+    <style>
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+div.chosen-container.chosen-container-single#colorado_towns_chosen,
+div.chosen-container.chosen-container-single#us_towns_chosen,
+div.chosen-container.chosen-container-single#other_things_chosen {
+    width:165px!important;
+}
+
+.region2b > table > tbody > tr > td {
+    width: 880px !important;
+    display: block;
+}
+
+td.region3, td.region6, td.region7, td.region14 {
+    display: none !important;
+}
+
+td.region2b {
+    width: 885px;
+}
+
+td.articleBox {
+    padding: 10px !important;
+}
+
+.fire {
+    width: 860px;
+    min-height: 90px;
+    clear: both;
+}
+
+.fire-detail {
+    width: 345px;
+    float: left;
+}
+
+.fire-detail h2 {
+    font-family: 'Source Serif Pro', Georgia, Times, "Times New Roman", serif;
+    font-size: 20px;
+    margin: 4px 8px 8px;
+}
+
+.fire-detail p {
+    font-family: 'Source Serif Pro', Georgia, Times, "Times New Roman", serif;
+    color: #222;
+    font-size: 14px;
+    margin: 0 8px 4px;
+    line-height: 16px;
+    text-indent: 20px;
+}
+
+#header .fire-detail p {
+    font-family: 'Source Serif Pro', Georgia, Times, "Times New Roman", serif;
+    color: #222;
+    font-size: 13px;
+    margin: 6px 8px 0;
+    line-height: 14px;
+    margin-top: 12px;
+    text-indent: 0;
+}
+
+.fire-detail span {
+    font-weight: bold;
+}
+
+.column {
+    text-align: center !important;
+    width: 170px;
+    height: 90px;
+    float: left;
+    border-left: 1px solid #999;
+    font-family: 'Source Serif Pro', Georgia, Times, "Times New Roman", serif;
+    color: #222;
+    font-size: 12px;
+    line-height: 17px;
+}
+
+.column .fire-number {
+    font-family: 'Source Serif Pro', Georgia, Times, "Times New Roman", serif;
+    color: #222;
+    font-size: 20px;
+    line-height: 40px;
+}
+
+select {
+    margin-left: 3px;
+}
+
+.even {
+    background-color: #eee;
+}
+
+#header .column {
+    height: 35px;
+    padding: 5px 0;
+}
+    </style>
+</head>
+
+<body>
+
+    <div style="width:860px;border:1px solid #999;margin:0 auto;">
+    <div id='header' class='fire' style="min-height:0; height:35px;border-bottom:1px solid #999;">
+        <div class="fire-detail"><p>Select something to compare fire sizes to:</p></div>
+        <div class="column">
+    <select name="colorado-towns" id="colorado-towns">
+    <option value="" label="">Colorado Cities</option>
+    <option value="0.392" label="Aguilar">Aguilar</option>
+    <option value="2.629" label="Akron">Akron</option>
+    <option value="5.390" label="Alamosa">Alamosa</option>
+    <option value="0.360" label="Alma">Alma</option>
+    <option value="0.403" label="Antonito">Antonito</option>
+    <option value="0.440" label="Arriba">Arriba</option>
+    <option value="35.142" label="Arvada">Arvada</option>
+    <option value="3.874" label="Aspen">Aspen</option>
+    <option value="0.789" label="Ault">Ault</option>
+    <option value="154.734" label="Aurora">Aurora</option>
+    <option value="8.029" label="Avon">Avon</option>
+    <option value="1.981" label="Basalt">Basalt</option>
+    <option value="1.441" label="Bayfield">Bayfield</option>
+    <option value="5.564" label="Bennett">Bennett</option>
+    <option value="11.429" label="Berthoud">Berthoud</option>
+    <option value="0.162" label="Bethune">Bethune</option>
+    <option value="1.945" label="Black Hawk">Black Hawk</option>
+    <option value="1.786" label="Blanca">Blanca</option>
+    <option value="2.515" label="Blue River">Blue River</option>
+    <option value="0.437" label="Bonanza">Bonanza</option>
+    <option value="0.362" label="Boone">Boone</option>
+    <option value="24.665" label="Boulder">Boulder</option>
+    <option value="0.683" label="Bow Mar">Bow Mar</option>
+    <option value="0.245" label="Branson">Branson</option>
+    <option value="5.911" label="Breckenridge">Breckenridge</option>
+    <option value="19.983" label="Brighton">Brighton</option>
+    <option value="0.465" label="Brookside">Brookside</option>
+    <option value="33.034" label="Broomfield">Broomfield</option>
+    <option value="2.474" label="Brush">Brush</option>
+    <option value="3.454" label="Buena Vista">Buena Vista</option>
+    <option value="2.094" label="Burlington">Burlington</option>
+    <option value="0.867" label="Calhan">Calhan</option>
+    <option value="0.144" label="Campo">Campo</option>
+    <option value="12.499" label="Cañon City">Cañon City</option>
+    <option value="2.044" label="Carbondale">Carbondale</option>
+    <option value="9.012" label="Castle Pines North">Castle Pines North</option>
+    <option value="33.789" label="Castle Rock">Castle Rock</option>
+    <option value="1.956" label="Cedaredge">Cedaredge</option>
+    <option value="28.722" label="Centennial">Centennial</option>
+    <option value="0.826" label="Center">Center</option>
+    <option value="2.426" label="Central City">Central City</option>
+    <option value="0.158" label="Cheraw">Cheraw</option>
+    <option value="6.207" label="Cherry Hills Village">Cherry Hills Village</option>
+    <option value="1.070" label="Cheyenne Wells">Cheyenne Wells</option>
+    <option value="1.272" label="Coal Creek">Coal Creek</option>
+    <option value="0.205" label="Cokedale">Cokedale</option>
+    <option value="0.608" label="Collbran">Collbran</option>
+    <option value="194.540" label="Colorado Springs">Colorado Springs</option>
+    <option value="1.025" label="Columbine Valley">Columbine Valley</option>
+    <option value="34.289" label="Commerce City">Commerce City</option>
+    <option value="6.214" label="Cortez">Cortez</option>
+    <option value="5.135" label="Craig">Craig</option>
+    <option value="0.243" label="Crawford">Crawford</option>
+    <option value="0.677" label="Creede">Creede</option>
+    <option value="0.842" label="Crested Butte">Crested Butte</option>
+    <option value="0.309" label="Crestone">Crestone</option>
+    <option value="1.554" label="Cripple Creek">Cripple Creek</option>
+    <option value="0.134" label="Crook">Crook</option>
+    <option value="0.225" label="Crowley">Crowley</option>
+    <option value="7.937" label="Dacono">Dacono</option>
+    <option value="4.311" label="De Beque">De Beque</option>
+    <option value="1.071" label="Deer Trail">Deer Trail</option>
+    <option value="1.008" label="Del Norte">Del Norte</option>
+    <option value="13.741" label="Delta">Delta</option>
+    <option value="153.000" label="Denver">Denver</option>
+    <option value="1.573" label="Dillon">Dillon</option>
+    <option value="0.785" label="Dinosaur">Dinosaur</option>
+    <option value="0.728" label="Dolores">Dolores</option>
+    <option value="0.538" label="Dove Creek">Dove Creek</option>
+    <option value="9.924" label="Durango">Durango</option>
+    <option value="0.470" label="Eads">Eads</option>
+    <option value="4.589" label="Eagle">Eagle</option>
+    <option value="2.365" label="Eaton">Eaton</option>
+    <option value="0.477" label="Eckley">Eckley</option>
+    <option value="0.700" label="Edgewater">Edgewater</option>
+    <option value="1.250" label="Elizabeth">Elizabeth</option>
+    <option value="0.255" label="Empire">Empire</option>
+    <option value="6.557" label="Englewood">Englewood</option>
+    <option value="17.180" label="Erie">Erie</option>
+    <option value="6.707" label="Estes Park">Estes Park</option>
+    <option value="10.199" label="Evans">Evans</option>
+    <option value="1.142" label="Fairplay">Fairplay</option>
+    <option value="1.776" label="Federal Heights">Federal Heights</option>
+    <option value="10.370" label="Firestone">Firestone</option>
+    <option value="1.277" label="Flagler">Flagler</option>
+    <option value="0.521" label="Fleming">Fleming</option>
+    <option value="4.170" label="Florence">Florence</option>
+    <option value="54.277" label="Fort Collins">Fort Collins</option>
+    <option value="7.190" label="Fort Lupton">Fort Lupton</option>
+    <option value="3.929" label="Fort Morgan">Fort Morgan</option>
+    <option value="23.984" label="Fountain">Fountain</option>
+    <option value="0.524" label="Fowler">Fowler</option>
+    <option value="1.278" label="Foxfield">Foxfield</option>
+    <option value="3.541" label="Fraser">Fraser</option>
+    <option value="13.442" label="Frederick">Frederick</option>
+    <option value="1.685" label="Frisco">Frisco</option>
+    <option value="7.115" label="Fruita">Fruita</option>
+    <option value="0.113" label="Garden City">Garden City</option>
+    <option value="0.358" label="Genoa">Genoa</option>
+    <option value="1.062" label="Georgetown">Georgetown</option>
+    <option value="0.818" label="Gilcrest">Gilcrest</option>
+    <option value="0.551" label="Glendale">Glendale</option>
+    <option value="5.682" label="Glenwood Springs">Glenwood Springs</option>
+    <option value="9.923" label="Golden">Golden</option>
+    <option value="0.748" label="Granada">Granada</option>
+    <option value="12.765" label="Granby">Granby</option>
+    <option value="38.218" label="Grand Junction">Grand Junction</option>
+    <option value="1.056" label="Grand Lake">Grand Lake</option>
+    <option value="46.550" label="Greeley">Greeley</option>
+    <option value="1.067" label="Green Mountain Falls">Green Mountain Falls</option>
+    <option value="8.267" label="Greenwood Village">Greenwood Village</option>
+    <option value="0.595" label="Grover">Grover</option>
+    <option value="3.233" label="Gunnison">Gunnison</option>
+    <option value="7.669" label="Gypsum">Gypsum</option>
+    <option value="0.302" label="Hartman">Hartman</option>
+    <option value="0.852" label="Haswell">Haswell</option>
+    <option value="0.537" label="Haxtun">Haxtun</option>
+    <option value="3.004" label="Hayden">Hayden</option>
+    <option value="0.218" label="Hillrose">Hillrose</option>
+    <option value="0.744" label="Holly">Holly</option>
+    <option value="2.368" label="Holyoke">Holyoke</option>
+    <option value="0.252" label="Hooper">Hooper</option>
+    <option value="0.759" label="Hot Sulphur Springs">Hot Sulphur Springs</option>
+    <option value="0.909" label="Hotchkiss">Hotchkiss</option>
+    <option value="4.724" label="Hudson">Hudson</option>
+    <option value="0.948" label="Hugo">Hugo</option>
+    <option value="2.168" label="Idaho Springs">Idaho Springs</option>
+    <option value="0.415" label="Ignacio">Ignacio</option>
+    <option value="0.252" label="Iliff">Iliff</option>
+    <option value="0.624" label="Jamestown">Jamestown</option>
+    <option value="13.523" label="Johnstown">Johnstown</option>
+    <option value="1.484" label="Julesburg">Julesburg</option>
+    <option value="2.237" label="Keenesburg">Keenesburg</option>
+    <option value="1.216" label="Kersey">Kersey</option>
+    <option value="0.358" label="Kim">Kim</option>
+    <option value="0.885" label="Kiowa">Kiowa</option>
+    <option value="0.584" label="Kit Carson">Kit Carson</option>
+    <option value="1.320" label="Kremmling">Kremmling</option>
+    <option value="0.354" label="La Jara">La Jara</option>
+    <option value="3.017" label="La Junta">La Junta</option>
+    <option value="0.895" label="La Veta">La Veta</option>
+    <option value="1.367" label="Lafayette">Lafayette</option>
+    <option value="9.463" label="Lake City">Lake City</option>
+    <option value="0.832" label="Lakeside">Lakeside</option>
+    <option value="41.600" label="Lakewood">Lakewood</option>
+    <option value="42.880" label="Lamar">Lamar</option>
+    <option value="4.230" label="Larkspur">Larkspur</option>
+    <option value="1.496" label="Las Animas">Las Animas</option>
+    <option value="1.620" label="LaSalle">LaSalle</option>
+    <option value="1.103" label="Leadville">Leadville</option>
+    <option value="2.138" label="Limon">Limon</option>
+    <option value="12.980" label="Littleton">Littleton</option>
+    <option value="3.744" label="Lochbuie">Lochbuie</option>
+    <option value="0.274" label="Log Lane Village">Log Lane Village</option>
+    <option value="9.572" label="Lone Tree">Lone Tree</option>
+    <option value="26.187" label="Longmont">Longmont</option>
+    <option value="7.885" label="Louisville">Louisville</option>
+    <option value="33.594" label="Loveland">Loveland</option>
+    <option value="1.238" label="Lyons">Lyons</option>
+    <option value="0.931" label="Manassa">Manassa</option>
+    <option value="0.643" label="Mancos">Mancos</option>
+    <option value="3.157" label="Manitou Springs">Manitou Springs</option>
+    <option value="0.276" label="Manzanola">Manzanola</option>
+    <option value="0.395" label="Marble">Marble</option>
+    <option value="9.635" label="Mead">Mead</option>
+    <option value="3.509" label="Meeker">Meeker</option>
+    <option value="0.167" label="Merino">Merino</option>
+    <option value="11.730" label="Milliken">Milliken</option>
+    <option value="7.574" label="Minturn">Minturn</option>
+    <option value="1.401" label="Moffat">Moffat</option>
+    <option value="2.593" label="Monte Vista">Monte Vista</option>
+    <option value="0.079" label="Montezuma">Montezuma</option>
+    <option value="17.798" label="Montrose">Montrose</option>
+    <option value="4.832" label="Monument">Monument</option>
+    <option value="2.216" label="Morrison">Morrison</option>
+    <option value="2.219" label="Mount Crested Butte">Mount Crested Butte</option>
+    <option value="0.093" label="Mountain View">Mountain View</option>
+    <option value="3.378" label="Mountain Village">Mountain Village</option>
+    <option value="0.687" label="Naturita">Naturita</option>
+    <option value="1.515" label="Nederland">Nederland</option>
+    <option value="2.657" label="New Castle">New Castle</option>
+    <option value="7.410" label="Northglenn">Northglenn</option>
+    <option value="0.292" label="Norwood">Norwood</option>
+    <option value="0.719" label="Nucla">Nucla</option>
+    <option value="3.099" label="Nunn">Nunn</option>
+    <option value="0.344" label="Oak Creek">Oak Creek</option>
+    <option value="1.451" label="Olathe">Olathe</option>
+    <option value="0.241" label="Olney Springs">Olney Springs</option>
+    <option value="0.176" label="Ophir">Ophir</option>
+    <option value="11.407" label="Orchard City">Orchard City</option>
+    <option value="0.771" label="Ordway">Ordway</option>
+    <option value="0.412" label="Otis">Otis</option>
+    <option value="0.881" label="Ouray">Ouray</option>
+    <option value="0.162" label="Ovid">Ovid</option>
+    <option value="4.855" label="Pagosa Springs">Pagosa Springs</option>
+    <option value="1.137" label="Palisade">Palisade</option>
+    <option value="3.091" label="Palmer Lake">Palmer Lake</option>
+    <option value="0.305" label="Paoli">Paoli</option>
+    <option value="0.854" label="Paonia">Paonia</option>
+    <option value="1.608" label="Parachute">Parachute</option>
+    <option value="20.475" label="Parker">Parker</option>
+    <option value="0.190" label="Peetz">Peetz</option>
+    <option value="0.816" label="Pierce">Pierce</option>
+    <option value="0.270" label="Pitkin">Pitkin</option>
+    <option value="2.527" label="Platteville">Platteville</option>
+    <option value="2.715" label="Poncha Springs">Poncha Springs</option>
+    <option value="0.233" label="Pritchett">Pritchett</option>
+    <option value="53.641" label="Pueblo">Pueblo</option>
+    <option value="0.245" label="Ramah">Ramah</option>
+    <option value="4.150" label="Rangely">Rangely</option>
+    <option value="0.726" label="Raymer">Raymer</option>
+    <option value="0.235" label="Red Cliff">Red Cliff</option>
+    <option value="0.757" label="Rico">Rico</option>
+    <option value="2.335" label="Ridgway">Ridgway</option>
+    <option value="5.605" label="Rifle">Rifle</option>
+    <option value="1.917" label="Rockvale">Rockvale</option>
+    <option value="1.661" label="Rocky Ford">Rocky Ford</option>
+    <option value="0.233" label="Romeo">Romeo</option>
+    <option value="0.095" label="Rye">Rye</option>
+    <option value="0.398" label="Saguache">Saguache</option>
+    <option value="2.574" label="Salida">Salida</option>
+    <option value="0.559" label="San Luis">San Luis</option>
+    <option value="1.467" label="Sanford">Sanford</option>
+    <option value="0.031" label="Sawpit">Sawpit</option>
+    <option value="0.334" label="Sedgwick">Sedgwick</option>
+    <option value="0.343" label="Seibert">Seibert</option>
+    <option value="6.152" label="Severance">Severance</option>
+    <option value="2.217" label="Sheridan">Sheridan</option>
+    <option value="0.317" label="Sheridan Lake">Sheridan Lake</option>
+    <option value="1.444" label="Silt">Silt</option>
+    <option value="15.464" label="Silver Cliff">Silver Cliff</option>
+    <option value="0.259" label="Silver Plume">Silver Plume</option>
+    <option value="3.972" label="Silverthorne">Silverthorne</option>
+    <option value="0.847" label="Silverton">Silverton</option>
+    <option value="0.559" label="Simla">Simla</option>
+    <option value="25.739" label="Snowmass Village">Snowmass Village</option>
+    <option value="2.476" label="South Fork">South Fork</option>
+    <option value="1.123" label="Springfield">Springfield</option>
+    <option value="0.073" label="Starkville">Starkville</option>
+    <option value="10.143" label="Steamboat Springs">Steamboat Springs</option>
+    <option value="7.610" label="Sterling">Sterling</option>
+    <option value="0.505" label="Stratton">Stratton</option>
+    <option value="0.385" label="Sugar City">Sugar City</option>
+    <option value="3.959" label="Superior">Superior</option>
+    <option value="0.264" label="Swink">Swink</option>
+    <option value="0.738" label="Telluride">Telluride</option>
+    <option value="34.843" label="Thornton">Thornton</option>
+    <option value="4.828" label="Timnath">Timnath</option>
+    <option value="9.276" label="Trinidad">Trinidad</option>
+    <option value="0.248" label="Two Buttes">Two Buttes</option>
+    <option value="4.671" label="Vail">Vail</option>
+    <option value="0.269" label="Victor">Victor</option>
+    <option value="0.128" label="Vilas">Vilas</option>
+    <option value="0.221" label="Vona">Vona</option>
+    <option value="0.335" label="Walden">Walden</option>
+    <option value="3.166" label="Walsenburg">Walsenburg</option>
+    <option value="0.447" label="Walsh">Walsh</option>
+    <option value="0.573" label="Ward">Ward</option>
+    <option value="3.366" label="Wellington">Wellington</option>
+    <option value="1.235" label="Westcliffe">Westcliffe</option>
+    <option value="31.550" label="Westminster">Westminster</option>
+    <option value="9.303" label="Wheat Ridge">Wheat Ridge</option>
+    <option value="1.325" label="Wiggins">Wiggins</option>
+    <option value="0.349" label="Wiley">Wiley</option>
+    <option value="3.568" label="Williamsburg">Williamsburg</option>
+    <option value="24.440" label="Windsor">Windsor</option>
+    <option value="16.501" label="Winter Park">Winter Park</option>
+    <option value="6.532" label="Woodland Park">Woodland Park</option>
+    <option value="3.391" label="Wray">Wray</option>
+    <option value="0.241" label="Yampa">Yampa</option>
+    <option value="3.118" label="Yuma">Yuma</option>
+    </select>
+        </div>
+        <div class="column">
+    <select name="us-towns" id="us-towns">
+    <option value="" label="">U.S. Cities</option>
+    <option value="302.6" label="New York, New York">New York</option>
+    <option value="22.96" label="Manhattan, NYC">Manhattan</option>
+    <option value="468.7" label="Los Angeles, California">Los Angeles</option>
+    <option value="227.6" label="Chicago, Illinois">Chicago</option>
+    <option value="634" label="Houston, Texas">Houston</option>
+    <option value="134.1" label="Philadelphia, Pennsylvania">Philadelphia</option>
+    <option value="516.7" label="Phoenix, Arizona">Phoenix</option>
+    <option value="460.9" label="San Antonio, Texas">San Antonio</option>
+    <option value="325.2" label="San Diego, California">San Diego</option>
+    <option value="340.5" label="Dallas, Texas">Dallas</option>
+    <option value="176.5" label="San Jose, California">San Jose</option>
+    <option value="747.0" label="Jacksonville, Florida">Jacksonville</option>
+    <option value="361.4" label="Indianapolis, Indiana">Indianapolis</option>
+    <option value="46.9" label="San Francisco, California">San Francisco</option>
+    <option value="297.9" label="Austin, Texas">Austin</option>
+    <option value="217.2" label="Columbus, Ohio">Columbus</option>
+    <option value="339.8" label="Fort Worth, Texas">Fort Worth</option>
+    <option value="297.7" label="Charlotte, North Carolina">Charlotte</option>
+    <option value="138.8" label="Detroit, Michigan">Detroit</option>
+    <option value="255.2" label="El Paso, Texas">El Paso</option>
+    <option value="315.1" label="Memphis, Tennessee">Memphis</option>
+    <option value="80.9" label="Baltimore, Maryland">Baltimore</option>
+    <option value="48.3" label="Boston, Massachusetts">Boston</option>
+    <option value="83.9" label="Seattle, Washington">Seattle</option>
+    <option value="61.0" label="Washington, D.C.">Washington D.C.</option>
+    <option value="475.1" label="Nashville, Tennessee">Nashville</option>
+    <option value="153.3" label="Denver, Colorado">Denver</option>
+    <option value="325.2" label="Louisville, Kentucky">Louisville</option>
+    <option value="96.1" label="Milwaukee, Wisconsin">Milwaukee</option>
+    <option value="134.3" label="Portland, Oregon">Portland</option>
+    <option value="135.8" label="Las Vegas, Nevada">Las Vegas</option>
+    <option value="66.4" label="Oklahoma City, Oklahoma">Oklahoma City</option>
+    <option value="187.7" label="Albuquerque, New Mexico">Albuquerque</option>
+    <option value="226.7" label="Tucson, Arizona">Tucson</option>
+    <option value="112.0" label="Fresno, California">Fresno</option>
+    <option value="97.9" label="Sacramento, California">Sacramento</option>
+    <option value="50.3" label="Long Beach, California">Long Beach</option>
+    <option value="315.0" label="Kansas City, Missouri">Kansas City</option>
+    <option value="136.5" label="Mesa, Arizona">Mesa</option>
+    <option value="249.0" label="Virginia Beach, Virginia">Virginia Beach</option>
+    <option value="133.2" label="Atlanta, Georgia">Atlanta</option>
+    <option value="194.5" label="Colorado Springs, Colorado">Colorado Springs</option>
+    <option value="127.1" label="Omaha, Nebraska">Omaha</option>
+    <option value="142.9" label="Raleigh, North Carolina">Raleigh</option>
+    <option value="35.9" label="Miami, Florida">Miami</option>
+    <option value="77.7" label="Cleveland, Ohio">Cleveland</option>
+    <option value="196.8" label="Tulsa, Oklahoma">Tulsa</option>
+    <option value="55.8" label="Oakland, California">Oakland</option>
+    <option value="54.0" label="Minneapolis, Minnesota">Minneapolis</option>
+    <option value="159.3" label="Wichita, Kansas">Wichita</option>
+    <option value="95.9" label="Arlington, Texas">Arlington</option>
+    <option value="142.2" label="Bakersfield, California">Bakersfield</option>
+    <option value="169.4" label="New Orleans, Louisiana">New Orleans</option>
+    <option value="60.5" label="Honolulu, Hawaii">Honolulu</option>
+    <option value="49.8" label="Anaheim, California">Anaheim</option>
+    <option value="113.4" label="Tampa, Florida">Tampa</option>
+    <option value="154.7" label="Aurora, Colorado">Aurora</option>
+    <option value="27.3" label="Santa Ana, California">Santa Ana</option>
+    <option value="61.9" label="St. Louis, Missouri">St. Louis</option>
+    <option value="55.4" label="Pittsburgh, Pennsylvania">Pittsburgh</option>
+    <option value="160.6" label="Corpus Christi, Texas">Corpus Christi</option>
+    <option value="81.1" label="Riverside, California">Riverside</option>
+    <option value="77.9" label="Cincinnati, Ohio">Cincinnati</option>
+    <option value="283.6" label="Lexington, Kentucky">Lexington</option>
+    <option value="1704.7" label="Anchorage, Alaska">Anchorage</option>
+    <option value="61.7" label="Stockton, California">Stockton</option>
+    <option value="80.7" label="Toledo, Ohio">Toledo</option>
+    <option value="52.0" label="Saint Paul, Minnesota">Saint Paul</option>
+    <option value="24.2" label="Newark, New Jersey">Newark</option>
+    <option value="126.5" label="Greensboro, North Carolina">Greensboro</option>
+    <option value="40.4" label="Buffalo, New York">Buffalo</option>
+    <option value="71.6" label="Plano, Texas">Plano</option>
+    <option value="89.1" label="Lincoln, Nebraska">Lincoln</option>
+    <option value="17.7" label="Henderson, Nevada">Henderson</option>
+    <option value="110.6" label="Fort Wayne, Indiana">Fort Wayne</option>
+    <option value="14.8" label="Jersey City, New Jersey">Jersey City</option>
+    <option value="61.7" label="St. Petersburg, Florida">St. Petersburg</option>
+    <option value="49.6" label="Chula Vista, California">Chula Vista</option>
+    <option value="54.1" label="Norfolk, Virginia">Norfolk</option>
+    <option value="12.4" label="Orlando, Florida">Orlando</option>
+    <option value="64.4" label="Chandler, Arizona">Chandler</option>
+    <option value="88.9" label="Laredo, Texas">Laredo</option>
+    <option value="76.8" label="Madison, Wisconsin">Madison</option>
+    <option value="132.4" label="Winston-Salem, North Carolina">Winston-Salem</option>
+    <option value="122.4" label="Lubbock, Texas">Lubbock</option>
+    <option value="76.9" label="Baton Rouge, Louisiana">Baton Rouge</option>
+    <option value="17.4" label="Durham, North Carolina">Durham</option>
+    <option value="57.1" label="Garland, Texas">Garland</option>
+    <option value="60.0" label="Glendale, Arizona">Glendale</option>
+    <option value="13.0" label="Reno, Nevada">Reno</option>
+    <option value="21.5" label="Hialeah, Florida">Hialeah</option>
+    <option value="340.8" label="Chesapeake, Virginia">Chesapeake</option>
+    <option value="183.9" label="Scottsdale, Arizona">Scottsdale</option>
+    <option value="11.3" label="North Las Vegas, Nevada">North Las Vegas</option>
+    <option value="67.0" label="Irving, Texas">Irving</option>
+    <option value="77.5" label="Fremont, California">Fremont</option>
+    <option value="66.1" label="Irvine, California">Irvine</option>
+    <option value="146.1" label="Birmingham, Alabama">Birmingham</option>
+    <option value="35.8" label="Rochester, New York">Rochester</option>
+    <option value="59.2" label="San Bernardino, California">San Bernardino</option>
+    <option value="59.2" label="Spokane, Washington">Spokane</option>
+    <option value="68.0" label="Gilbert, Arizona">Gilbert</option>
+    <option value="26.0" label="Arlington, Virginia">Arlington</option>
+    <option value="159.6" label="Montgomery, Alabama">Montgomery</option>
+    <option value="79.4" label="Boise City, Idaho">Boise City</option>
+    <option value="59.8" label="Richmond, Virginia">Richmond</option>
+    <option value="80.9" label="Des Moines, Iowa">Des Moines</option>
+    <option value="36.9" label="Modesto, California">Modesto</option>
+    <option value="145.8" label="Fayetteville, North Carolina">Fayetteville</option>
+    <option value="15.4" label="Shreveport, Louisiana">Shreveport</option>
+    <option value="62.0" label="Akron, Ohio">Akron</option>
+    <option value="49.7" label="Tacoma, Washington">Tacoma</option>
+    <option value="44.9" label="Aurora, Illinois">Aurora</option>
+    <option value="26.9" label="Oxnard, California">Oxnard</option>
+    <option value="42.4" label="Fontana, California">Fontana</option>
+    <option value="18.0" label="Yonkers, New York">Yonkers, New York</option>
+    <option value="32.5" label="Augusta, Georgia">Augusta</option>
+    <option value="139.1" label="Mobile, Alabama">Mobile</option>
+    <option value="119.2" label="Little Rock, Arkansas">Little Rock</option>
+    <option value="51.3" label="Moreno Valley, California">Moreno Valley</option>
+    <option value="30.5" label="Glendale, California">Glendale</option>
+    <option value="99.5" label="Amarillo, Texas">Amarillo</option>
+    <option value="26.7" label="Huntington Beach, California">Huntington Beach</option>
+    <option value="216.4" label="Columbus, Georgia">Columbus</option>
+    <option value="44.4" label="Grand Rapids, Michigan">Grand Rapids</option>
+    <option value="111.1" label="Salt Lake City, Utah">Salt Lake City</option>
+    <option value="100.2" label="Tallahassee, Florida">Tallahassee</option>
+    <option value="37.4" label="Worcester, Massachusetts">Worcester</option>
+    <option value="68.7" label="Newport News, Virginia">Newport News</option>
+    <option value="29.1" label="Huntsville, Alabama">Huntsville</option>
+    <option value="98.5" label="Knoxville, Tennessee">Knoxville</option>
+    <option value="18.4" label="Providence, Rhode Island">Providence</option>
+    <option value="52.7" label="Santa Clarita, California">Santa Clarita</option>
+    <option value="72.1" label="Grand Prairie, Texas">Grand Prairie</option>
+    <option value="132.3" label="Brownsville, Texas">Brownsville</option>
+    <option value="111.0" label="Jackson, Mississippi">Jackson</option>
+    <option value="74.8" label="Overland Park, Kansas">Overland Park</option>
+    <option value="17.9" label="Garden Grove, California">Garden Grove</option>
+    <option value="41.3" label="Santa Rosa, California">Santa Rosa</option>
+    <option value="137.2" label="Chattanooga, Tennessee">Chattanooga</option>
+    <option value="41.2" label="Oceanside, California">Oceanside</option>
+    <option value="34.8" label="Fort Lauderdale, Florida">Fort Lauderdale</option>
+    <option value="39.9" label="Rancho Cucamonga, California">Rancho Cucamonga</option>
+    <option value="114.0" label="Port Saint Lucie, Florida">Port Saint Lucie</option>
+    <option value="49.9" label="Ontario, California">Ontario</option>
+    <option value="46.5" label="Vancouver, Washington">Vancouver</option>
+    <option value="39.9" label="Tempe, Arizona">Tempe</option>
+    <option value="81.7" label="Springfield, Missouri">Springfield</option>
+    <option value="94.3" label="Lancaster, California">Lancaster</option>
+    <option value="43.7" label="Eugene, Oregon">Eugene</option>
+    <option value="33.1" label="Pembroke Pines, Florida">Pembroke Pines</option>
+    <option value="47.9" label="Salem, Oregon">Salem</option>
+    <option value="15.7" label="Cape Coral, Florida">Cape Coral</option>
+    <option value="174.4" label="Peoria, Arizona">Peoria</option>
+    <option value="73.0" label="Sioux Falls, South Dakota">Sioux Falls</option>
+    <option value="31.9" label="Springfield, Massachusetts">Springfield</option>
+    <option value="42.2" label="Elk Grove, California">Elk Grove</option>
+    <option value="61.1" label="Rockford, Illinois">Rockford</option>
+    <option value="16.0" label="Palmdale, California">Palmdale</option>
+    <option value="38.8" label="Corona, California">Corona</option>
+    <option value="23.2" label="Salinas, California">Salinas</option>
+    <option value="23.0" label="Pomona, California">Pomona</option>
+    <option value="42.8" label="Pasadena, Texas">Pasadena</option>
+    <option value="62.1" label="Joliet, Illinois">Joliet</option>
+    <option value="8.4" label="Paterson, New Jersey">Paterson</option>
+    <option value="124.8" label="Kansas City, Kansas">Kansas City</option>
+    <option value="20.5" label="Torrance, California">Torrance</option>
+    <option value="25.0" label="Syracuse, New York">Syracuse, New York</option>
+    <option value="16.0" label="Bridgeport, Connecticut">Bridgeport</option>
+    <option value="45.3" label="Hayward, California">Hayward</option>
+    <option value="54.3" label="Fort Collins, Colorado">Fort Collins</option>
+    <option value="36.8" label="Escondido, California">Escondido</option>
+    <option value="42.9" label="Lakewood, Colorado">Lakewood</option>
+    <option value="38.8" label="Naperville, Illinois">Naperville</option>
+    <option value="55.7" label="Dayton, Ohio">Dayton</option>
+    <option value="27.4" label="Hollywood, Florida">Hollywood</option>
+    <option value="22.0" label="Sunnyvale, California">Sunnyvale</option>
+    <option value="15.0" label="Alexandria, Virginia">Alexandria</option>
+    <option value="46.0" label="Mesquite, Texas">Mesquite</option>
+    <option value="51.4" label="Hampton, Virginia">Hampton</option>
+    <option value="23.0" label="Pasadena, California">Pasadena</option>
+    <option value="24.8" label="Orange, California">Orange</option>
+    <option value="13.2" label="Savannah, Georgia">Savannah</option>
+    <option value="54.3" label="Cary, North Carolina">Cary</option>
+    <option value="22.4" label="Fullerton, California">Fullerton</option>
+    <option value="34.4" label="Warren, Michigan">Warren</option>
+    <option value="97.6" label="Clarksville, Tennessee">Clarksville</option>
+    <option value="62.2" label="McKinney, Texas">McKinney</option>
+    <option value="48.3" label="McAllen, Texas">McAllen</option>
+    <option value="18.7" label="New Haven, Connecticut">New Haven</option>
+    <option value="36.5" label="Sterling Heights, Michigan">Sterling Heights</option>
+    <option value="35.6" label="West Valley City, Utah">West Valley City</option>
+    <option value="132.2" label="Columbia, South Carolina">Columbia</option>
+    <option value="53.6" label="Killeen, Texas">Killeen</option>
+    <option value="60.2" label="Topeka, Kansas">Topeka</option>
+    <option value="55.0" label="Thousand Oaks, California">Thousand Oaks</option>
+    <option value="70.8" label="Cedar Rapids, Iowa">Cedar Rapids</option>
+    <option value="59.7" label="Olathe, Kansas">Olathe</option>
+    <option value="12.3" label="Elizabeth, New Jersey">Elizabeth</option>
+    <option value="89.0" label="Waco, Texas">Waco</option>
+    <option value="17.4" label="Hartford, Connecticut">Hartford</option>
+    <option value="36.2" label="Visalia, California">Visalia</option>
+    <option value="61.3" label="Gainesville, Florida">Gainesville</option>
+    <option value="41.5" label="Simi Valley, California">Simi Valley</option>
+    <option value="37.6" label="Stamford, Connecticut">Stamford</option>
+    <option value="32.0" label="Bellevue, Washington">Bellevue</option>
+    <option value="30.5" label="Concord, California">Concord</option>
+    <option value="29.5" label="Miramar, Florida">Miramar</option>
+    <option value="23.8" label="Coral Springs, Florida">Coral Springs</option>
+    <option value="49.2" label="Lafayette, Louisiana">Lafayette</option>
+    <option value="19.0" label="Charleston, South Carolina">Charleston</option>
+    <option value="36.3" label="Carrollton, Texas">Carrollton</option>
+    <option value="36.2" label="Roseville, California">Roseville</option>
+    <option value="34.8" label="Thornton, Colorado">Thornton</option>
+    <option value="82.8" label="Beaumont, Texas">Beaumont</option>
+    <option value="17.5" label="Allentown, Pennsylvania">Allentown</option>
+    <option value="15.7" label="Surprise, Arizona">Surprise</option>
+    <option value="44.2" label="Evansville, Indiana">Evansville</option>
+    <option value="16.8" label="Abilene, Texas">Abilene</option>
+    <option value="61.8" label="Frisco, Texas">Frisco</option>
+    <option value="77.6" label="Independence, Missouri">Independence</option>
+    <option value="18.4" label="Santa Clara, California">Santa Clara</option>
+    <option value="59.5" label="Springfield, Illinois">Springfield</option>
+    <option value="30.7" label="Vallejo, California">Vallejo</option>
+    <option value="73.2" label="Victorville, California">Victorville</option>
+    <option value="116.4" label="Athens, Georgia">Athens</option>
+    <option value="48.0" label="Peoria, Illinois">Peoria</option>
+    <option value="36.0" label="Lansing, Michigan">Lansing</option>
+    <option value="27.8" label="Ann Arbor, Michigan">Ann Arbor</option>
+    <option value="99.6" label="El Monte, California">El Monte</option>
+    <option value="88.0" label="Denton, Texas">Denton</option>
+    <option value="10.5" label="Berkeley, California">Berkeley</option>
+    <option value="41.7" label="Provo, Utah">Provo</option>
+    <option value="12.4" label="Downey, California">Downey</option>
+    <option value="72.1" label="Midland, Texas">Midland</option>
+    <option value="178.8" label="Norman, Oklahoma">Norman</option>
+    <option value="28.5" label="Waterbury, Connecticut">Waterbury</option>
+    <option value="15.7" label="Costa Mesa, California">Costa Mesa</option>
+    <option value="99.1" label="Inglewood, California">Inglewood</option>
+    <option value="33.1" label="Manchester, New Hampshire">Manchester</option>
+    <option value="55.3" label="Murfreesboro, Tennessee">Murfreesboro</option>
+    <option value="63.1" label="Columbia, Missouri">Columbia</option>
+    <option value="37.2" label="Elgin, Illinois">Elgin</option>
+    <option value="25.6" label="Clearwater, Florida">Clearwater</option>
+    <option value="18.2" label="Miami Gardens, Florida">Miami Gardens</option>
+    <option value="54.6" label="Rochester, Minnesota">Rochester</option>
+    <option value="53.6" label="Pueblo, Colorado">Pueblo</option>
+    <option value="13.6" label="Lowell, Massachusetts">Lowell</option>
+    <option value="51.5" label="Wilmington, North Carolina">Wilmington</option>
+    <option value="35.1" label="Arvada, Colorado">Arvada</option>
+    <option value="21.7" label="Ventura, California">Ventura</option>
+    <option value="31.6" label="Westminster, Colorado">Westminster</option>
+    <option value="16.0" label="West Covina, California">West Covina</option>
+    <option value="23.2" label="Gresham, Oregon">Gresham</option>
+    <option value="48.8" label="Fargo, North Dakota">Fargo</option>
+    <option value="99.7" label="Norwalk, California">Norwalk</option>
+    <option value="37.7" label="Carlsbad, California">Carlsbad</option>
+    <option value="37.4" label="Fairfield, California">Fairfield</option>
+    <option value="6.4" label="Cambridge, Massachusetts">Cambridge</option>
+    <option value="72.1" label="Wichita Falls, Texas">Wichita Falls</option>
+    <option value="53.8" label="High Point, North Carolina">High Point</option>
+    <option value="33.7" label="Billings, Montana">Billings</option>
+    <option value="45.5" label="Green Bay, Wisconsin">Green Bay</option>
+    <option value="32.5" label="West Jordan, Utah">West Jordan</option>
+    <option value="30.1" label="Richmond, California">Richmond</option>
+    <option value="33.6" label="Murrieta, California">Murrieta</option>
+    <option value="17.3" label="Burbank, California">Burbank</option>
+    <option value="65.7" label="Palm Bay, Florida">Palm Bay</option>
+    <option value="33.4" label="Everett, Washington">Everett</option>
+    <option value="33.4" label="Flint, Michigan">Flint</option>
+    <option value="28.3" label="Antioch, California">Antioch</option>
+    <option value="19.1" label="Erie, Pennsylvania">Erie</option>
+    <option value="41.5" label="South Bend, Indiana">South Bend</option>
+    <option value="7.7" label="Daly City, California">Daly City</option>
+    <option value="28.7" label="Centennial, Colorado">Centennial</option>
+    <option value="30.2" label="Temecula, California">Temecula</option>
+    </select>
+        </div>
+        <div class="column">
+            
+    <select name="other-things" id="other-things">
+    <option value="" label="">Other things</option>
+    <option value=".0020661157024793" label="an NFL Football Field">NFL football field</option>
+    <option value=".00004483758034894399" label="an Olympic-sized pool">Olympic-sized pool</option>
+    <option value=".0078125" label="a Denver City Block">Denver city block</option>
+    <option value=".025" label="Civic Center park">Civic Center park</option>
+    <option value=".0538050964" label="DIA's Jeppesen Terminal">DIA Terminal</option>
+    <option value=".0148860767" label="the Centennial IKEA store">IKEA Centennial</option>
+    <option value="5.1" label="Lake Dillon">Lake Dillon</option>
+    <option value=".00197285354" label="The White House">The White House</option>
+    <option value=".00125545225" label="Mike Shanahan's Mansion">Shanahan Mansion</option>
+    <option value=".0000000119" label="a queen-sized bed">Queen-sized bed</option>
+    <option value="1.3" label="New York's Central Park">Central Park, NYC</option>
+    <option value="6.734" label="L.A.'s Griffith Park">Griffith Park, LA</option>
+    <option value="8" label="the island of Iwo Jima">Iwo Jima</option>
+    <option value="1904" label="Grand Canyon National Park">Grand Canyon</option>
+    <option value="3472" label="Yellowstone National Park">Yellowstone</option>
+    <option value="" label=""></option>
+    <option value="" label=""></option>
+    <option value="" label=""></option>
+    <option value="" label=""></option>
+    <option value="" label=""></option>
+    </select>
+    </div>
+    </div>
+
+
+    <script type="text/javascript">
+    // Initialize the initialized.
+    $('#colorado-towns').chosen();
+    $('#us-towns').chosen();
+    $('#other-things').chosen();
+    
+    $('#colorado-towns').change( function(){
+        //Get the label of the selected option
+        var the_text = $("#colorado-towns option:selected").attr('label');
+       // Loop through the fires we're publishing, and update the appropriate div
+       // with the calculation.
+       for ( var i = 0; i < fire_count; i ++ )
+       {
+            // Update each of the cells for each of the fires.
+            // We've got a wide range of values we're publishing.
+            // We change how we round based on the value.
+            // Catch users selecting the Title option (which has no value) and clear the fields rather than echoing Infinity
+            if (this.value !== '') {
+                var the_value = '<span class="fire-number">' + calc(fires[i].miles, this.value) + '</span><br> times the size of<br>' + the_text + '.';
+            } else {
+                var the_value = '';
+            };
+            jQuery('#' + fires[i].name + '-co').html(the_value);
+       }
+    });
+    
+    $('#us-towns').change( function(){
+        //Get the label of the selected option
+        var the_text = $("#us-towns option:selected").attr('label');
+       // Loop through the fires we're publishing, and update the appropriate div
+       // with the calculation.
+       for ( var i = 0; i < fire_count; i ++ )
+       {
+            // Update each of the cells for each of the fires.
+            // We've got a wide range of values we're publishing.
+            // We change how we round based on the value.
+            // Catch users selecting the Title option (which has no value) and clear the fields rather than echoing Infinity
+            if (this.value !== '') {
+                var the_value = '<span class="fire-number">' + calc(fires[i].miles, this.value) + '</span><br> times the size of<br>' + the_text + '.';
+            } else {
+                var the_value = '';
+            };
+            jQuery('#' + fires[i].name + '-us').html(the_value);
+       }
+    });
+    
+    $('#other-things').change( function(){
+        //Get the label of the selected option
+        var the_text = $("#other-things option:selected").attr('label');
+       // Loop through the fires we're publishing, and update the appr nb opriate div
+       // with the calculation.
+       for ( var i = 0; i < fire_count; i ++ )
+       {
+            // Update each of the cells for each of the fires.
+            // We've got a wide range of values we're publishing.
+            // We change how we round based on the value.
+            // Catch users selecting the Title option (which has no value) and clear the fields rather than echoing Infinity
+            if (this.value !== '') {
+                var the_value = '<span class="fire-number">' + calc(fires[i].miles, this.value) + '</span><br> times the size of<br>' + the_text + '.';
+            } else {
+                var the_value = '';
+            };
+            jQuery('#' + fires[i].name + '-other').html(the_value);
+       }
+    });
+    
+    function calc(fire_size, divisor)
+    {
+        // Take a fire size (in square miles) and divide it by the divisor.
+        // The calculation is the this.value divided by the fire's square miles.
+        // We return a float. The lower the number is, the more precise with the
+        // fraction we get.
+        var raw_value = fire_size / divisor;
+        var the_value = Math.round((raw_value)*1000)/1000;
+        if ( raw_value > 5 )
+        {
+            the_value = Math.round(raw_value*10)/10;
+        }
+        
+        return the_value;
+    }
+    
+    function fire(name, acres)
+    {
+        // This is what we use to define the fire object.
+        // There is also some markup we write here.
+        this.name = name;
+        this.acres = acres;
+        this.miles = acres / 640;
+        
+        // Add the acreage, miles to the page
+        jQuery('#' + name + '-acres').html(acres);
+        jQuery('#' + name + '-miles').html(Math.round(this.miles*10)/10);
+    }
+
+
+    //var fires = new Array('waldo', 'high_park', 'last_chance', 'flagstaff', 'weber', 'black_forest');
+    </script>
+    
+        <div id='black_forest' class="fire">
+            <div class="fire-detail">
+                <h2><a href="http://www.denverpost.com/coloradowildfires2013" target="_parent">Black Forest fire</a></h2>
+                <p>June, 2013 | <a href="http://www.denverpost.com/breakingnews/ci_23451177/black-forest-fire-evacuation-zone-expands-winds-lightning" target="_parent">Near Colorado Springs</a></p>
+                <p><span id="black_forest-acres"></span> acres at its largest (<span id="black_forest-miles"></span> square miles)</p>
+            </div>
+            <div id="black_forest-co" class="column"></div>
+            <div id="black_forest-us" class="column"></div>
+            <div id="black_forest-other" class="column"></div>
+        </div>
+        <div id='waldo' class="fire even">
+            <div class="fire-detail">
+                <h2><a href="http://www.denverpost.com/waldocanyonfire" target="_parent">Waldo Canyon fire</a></h2>
+                <p>June, 2012 | <a href="http://www.denverpost.com/news/ci_20928988" target="_parent">Near Colorado Springs</a></p>
+                <p><span id="waldo-acres"></span> acres at its largest (<span id="waldo-miles"></span> square miles)</p>
+            </div>
+            <div id="waldo-co" class="column"></div>
+            <div id="waldo-us" class="column"></div>
+            <div id="waldo-other" class="column"></div>
+        </div>
+        <div id='high_park' class="fire">
+            <div class="fire-detail">
+                <h2><a href="http://www.denverpost.com/highparkfire" target="_parent">High Park fire</a></h2>
+                <p>June, 2012 | <a href="http://www.denverpost.com/news/ci_20831968/perimeter-map-colorado-wildfire-high-park-fire-near-fort-collins" target="_parent">Near Fort Collins</a></p>
+                <p><span id="high_park-acres"></span> acres at its largest (<span id="high_park-miles"></span> square miles)</p>
+            </div>
+            <div id="high_park-co" class="column"></div>
+            <div id="high_park-us" class="column"></div>
+            <div id="high_park-other" class="column"></div>
+        </div>
+        <div id='flagstaff' class="fire even">
+            <div class="fire-detail">
+                <h2>Flagstaff fire</h2>
+                <p>June, 2012 | <a href="http://www.denverpost.com/news/ci_20951733" target="_parent">Near Boulder</a></p>
+                <p><span id="flagstaff-acres"></span> acres at its largest (<span id="flagstaff-miles"></span> square miles)</p>
+            </div>
+            <div id="flagstaff-co" class="column"></div>
+            <div id="flagstaff-us" class="column"></div>
+            <div id="flagstaff-other" class="column"></div>
+        </div>
+        <div id='last_chance' class="fire">
+            <div class="fire-detail">
+                <h2>Last Chance fire</h2>
+                <p>June, 2012 | <a href="http://www.denverpost.com/news/ci_20933239/interactive-map-active-colorado-wildfires" target="_parent">Near Last Chance</a> (north of Limon)</p>
+                <p><span id="last_chance-acres"></span> acres at its largest (<span id="last_chance-miles"></span> square miles)</p>
+            </div>
+            <div id="last_chance-co" class="column"></div>
+            <div id="last_chance-us" class="column"></div>
+            <div id="last_chance-other" class="column"></div>
+        </div>
+        <div id='weber' class="fire even">
+            <div class="fire-detail">
+                <h2>Weber fire</h2>
+                <p>June, 2012 | <a href="http://www.denverpost.com/news/ci_20933194" target="_parent">Near Mancos</a> (west of Durango)</p>
+                <p><span id="weber-acres"></span> acres at its largest (<span id="weber-miles"></span> square miles)</p>
+            </div>
+            <div id="weber-co" class="column"></div>
+            <div id="weber-us" class="column"></div>
+            <div id="weber-other" class="column"></div>
+        </div>
+        <div id='pine_ridge' class="fire">
+            <div class="fire-detail">
+                <h2>Pine Ridge fire</h2>
+                <p>June, 2012 | <a href="http://www.denverpost.com/news/ci_20972858" target="_parent">Near Grand Junction</a></p>
+                <p><span id="pine_ridge-acres"></span> acres at its largest (<span id="pine_ridge-miles"></span> square miles)</p>
+            </div>
+            <div id="pine_ridge-co" class="column"></div>
+            <div id="pine_ridge-us" class="column"></div>
+            <div id="pine_ridge-other" class="column"></div>
+        </div>
+    </div>
+    
+    <script type="text/javascript">
+    
+    var waldo = new fire('waldo', 18500);
+    var high_park = new fire('high_park', 87504);
+    var flagstaff = new fire('flagstaff', 300);
+    var last_chance = new fire('last_chance', 38400);
+    var weber = new fire('weber', 9155);
+    var pine_ridge = new fire('pine_ridge', 12963);
+    var black_forest = new fire('black_forest', 14198);
+
+    var fires = new Array(waldo, high_park, flagstaff, last_chance, weber, pine_ridge, black_forest);
+    var fire_count = fires.length;
+    </script>
+
+
+
+
+</body>
+
+</html>
