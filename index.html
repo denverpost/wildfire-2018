@@ -151,6 +151,44 @@
         return secs;
     }
 
+    function slugify(text) {
+        return text.toString().toLowerCase()
+            .replace(/\s+/g, '-')           // Replace spaces with -
+            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+            .replace(/^-+/, '')             // Trim - from start of text
+            .replace(/-+$/, '');            // Trim - from end of text
+    }
+
+    var QueryString = function () {
+      // This function is anonymous, is executed immediately and 
+      // the return value is assigned to QueryString!
+      var query_string = {};
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+            // If first entry with this name
+        if (typeof query_string[pair[0]] === "undefined") {
+          query_string[pair[0]] = decodeURIComponent(pair[1]);
+            // If second entry with this name
+        } else if (typeof query_string[pair[0]] === "string") {
+          var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+          query_string[pair[0]] = arr;
+            // If third or later entry with this name
+        } else {
+          query_string[pair[0]].push(decodeURIComponent(pair[1]));
+        }
+      } 
+      return query_string;
+    }();
+
+    if ( typeof QueryString.fire != 'undefined' ) {
+      var zoom_to_fire = QueryString.fire;
+    }
+
+    var coFires = new Array();
+
     var activeWildfiresUS2018 = new L.LayerGroup();
     var containedWildfiresUS2018 = new L.LayerGroup();
     var perimeters2018 = new L.LayerGroup();
@@ -247,7 +285,7 @@
     // MANUALLY ADD FIRES
     // L.marker([39.625579999999999, -106.1103], { icon: smallFireIcon }).addTo(activeWildfiresUS2018).bindPopup('<h3 class="fire-name">' + 'Buffalo' + '</h3><br>' + 'Acres: ' + '91' + '<br>' + 'Contained: ' + '20' + '%' + '<br>' + 'Started: ' + 'June 12, 2018' + '<br>' + 'Cause: ' + 'Unknown' + '<br>' + '<span class="update"><a href="' + 'https://inciweb.nwcg.gov/incident/5841/' + '" target="_blank">Fire details</a> &bull; Updated<br>' + 'June 14, 2018 7:08 AM' + '</span>');
 
-    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json?v='+vSec()", getData);
+    $.getJSON("wildfires-combined-all.json?v="+vSec(), getData);
 
     // ACTIVE U.S. WILDFIRES IN 2018
     function getData(data) {
@@ -319,9 +357,10 @@
         }).addTo(containedWildfiresUS2018);
     };
 
+    var geojsonLayer = false;
     // All 2018 FIRE PERIMETERS
-    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims.json", function(data) {
-        L.geoJson(data, {
+    $.getJSON("wildfires-combined-perims.json?v="+vSec(), function(data) {
+        geojsonLayer = L.geoJson(data, {
             style: function(feature) {
                 var fillColor;
                 var color;
@@ -337,11 +376,28 @@
             },
             onEachFeature: function(feature, layer) {
                 var perimeterDate = moment(feature.properties.perimeterdatetime).format('LLL');
-                layer.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.gisacres).toLocaleString() + '<br>' + '<span class="update">Updated ' + perimeterDate + '</span>')
+                layer.bindPopup('<h3 class="fire-name">' + feature.properties.incidentname + '</h3><br>' + 'Acres: ' + Math.round(feature.properties.gisacres).toLocaleString() + '<br>' + '<span class="update">Updated ' + perimeterDate + '</span>');
+                if (slugify(feature.properties.state) == 'co') {
+                    layer._leaflet_id = feature.id;
+                    coFires[slugify(feature.properties.incidentname)] = feature.id;
+                }
             }
         }).addTo(perimeters2018);
     });
     L.control.groupedLayers(baseLayers, groupedOverlays).addTo(map);
+
+    function changeView(poly) {
+            feature = geojsonLayer.getLayer(poly);
+            map.flyToBounds(feature.getBounds(),{maxZoom:12});
+        }
+
+    $(document).ready(function() {
+        setTimeout(function() {
+            if (typeof zoom_to_fire != 'undefined') {
+                console.log(coFires[zoom_to_fire]);
+                changeView(coFires[zoom_to_fire]);
+            }}, 2000);
+    });
     </script>
 </body>
 
