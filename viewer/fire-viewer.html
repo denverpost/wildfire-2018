@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Denver Post Wildfire Image viewer</title>
+    <meta name="robots" content="noindex,follow">
+	<link rel='stylesheet' id='mason-fonts-css'  href='https://fonts.googleapis.com/css?family=Source+Serif+Pro%3A400%2C400italic%2C600%2C600italic%2C700%2C700italic%7CSource+Sans+Pro%3A400%2C400italic%2C600%2C600italic%2C700%2C400italic&#038;ver=4.9.6' type='text/css' media='all' />
+	<link href="imageviewer.css"  rel="stylesheet" type="text/css" />
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="imageviewer.min.js"></script>
+	<style type="text/css">
+		body, html {
+			margin:0;
+			padding:0;
+			width:100%;
+			height:100%;
+			overflow:hidden;
+			background:#fafafa;
+		}
+    #image-gallery {
+      width: 100%;
+      position: relative;
+      height: 650px;
+      background: #000;
+    }
+    #image-gallery .image-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 50px;
+    }
+    #image-gallery .prev,
+    #image-gallery .next {
+      position: absolute;
+      height: 32px;
+      margin-top: -66px;
+      top: 50%;
+    }
+    #image-gallery .prev {
+      left: 20px;
+    }
+    #image-gallery .next {
+      right: 20px;
+      cursor: pointer;
+    }
+    #image-gallery .footer-info {
+      position: absolute;
+      height: 50px;
+      width: 100%;
+      left: 0;
+      bottom: 0;
+      line-height: 50px;
+      font-size: 24px;
+      text-align: center;
+      color: white;
+      border-top: 1px solid #FFF;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="image-gallery">
+    <div class="image-container"></div>
+    <img src="left.svg" class="prev"/>
+    <img src="right.svg"  class="next"/>
+    <div class="footer-info">
+        <span class="current"></span>/<span class="total"></span>
+    </div>
+</div>   
+<script type="text/javascript">
+$(function () {
+    var images = [{
+        small : '04s.jpg',
+        big : '04.jpg'
+    },{
+        small : '01s.jpg',
+        big : '01.jpg'
+    },{
+        small : '02s.jpg',
+        big : '02.jpg'
+    },{
+        small : '03s.jpg',
+        big : '03.jpg'
+    },{
+        small : '05s.jpg',
+        big : '05.jpg'
+    },{
+        small : '06s.jpg',
+        big : '06.jpg'
+    }];
+ 
+    var curImageIdx = 1,
+        total = images.length;
+    var wrapper = $('#image-gallery'),
+        curSpan = wrapper.find('.current');
+    var viewer = ImageViewer(wrapper.find('.image-container'));
+ 
+    //display total count
+    wrapper.find('.total').html(total);
+ 
+    function showImage(){
+        var imgObj = images[curImageIdx - 1];
+        viewer.load(imgObj.small, imgObj.big);
+        curSpan.html(curImageIdx);
+    }
+ 
+    wrapper.find('.next').click(function(){
+         curImageIdx++;
+        if(curImageIdx > total) curImageIdx = 1;
+        showImage();
+    });
+ 
+    wrapper.find('.prev').click(function(){
+         curImageIdx--;
+        if(curImageIdx < 0) curImageIdx = total;
+        showImage();
+    });
+ 
+    //initially show image
+    showImage();
+});
+</script>
+
+</body>
+</html>
