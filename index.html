@@ -142,11 +142,15 @@
             </li>
         </ul>
     </div>
-    <form>
-        <select id="fireDropdown" style="display:none;">
-            <option>Choose a fire</option>
-        </select>
-    </form>
+    <hr style="margin-top:-8px;margin-bottom:-6px;">
+    <div style="display:flex;">
+        <p><strong>Zoom to a Colorado wildfire</strong></p>
+        <form style="margin-top:16px;margin-left: 5px;">
+            <select id="fireDropdown" style="display:none;">
+                <option>Choose a fire</option>
+            </select>
+        </form>
+    </div>
     <div id="map"></div>
     <script>
     // VERSIONING FOR BROWSER CACHE
@@ -393,7 +397,7 @@
                 if (slugify(feature.properties.state) == 'co') {
                     layer._leaflet_id = feature.id;
                     coFires[slugify(feature.properties.incidentname)] = feature.id;
-                    if(fireStatus === 'Y') {
+                    if (fireStatus === 'Y') {
                         activeFireNames.push(feature.properties.incidentname);
                     }
                 }
@@ -405,16 +409,16 @@
     function populateSelect(list) {
         // POPULATE DROPDOWN WITH ACTIVE FIRE NAMES
         for (var i = 0; i < list.length; i++) {
-            console.log(list + ' ' + i);
+            //console.log(list + ' ' + i);
             var opt = list[i];
             var el = document.createElement("option");
             var sel = document.getElementById('fireDropdown');
             el.textContent = opt;
             el.value = slugify(list[i]);
-            console.log(el.value);
+            //console.log(el.value);
             sel.appendChild(el);
         };
-        $('#fireDropdown').css('display','block');
+        $('#fireDropdown').css('display', 'block');
         $('#fireDropdown').on('change', function() {
             var fire = $(this).val();
             changeView(coFires[fire]);
@@ -430,7 +434,7 @@
         setTimeout(function() {
             populateSelect(activeFireNames);
             if (typeof zoom_to_fire != 'undefined') {
-                console.log(coFires[zoom_to_fire]);
+                //console.log(coFires[zoom_to_fire]);
                 changeView(coFires[zoom_to_fire]);
             }
         }, 2000);
