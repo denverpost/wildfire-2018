@@ -330,7 +330,7 @@
 
     
     var pointDataFile = (view_colorado == 'colorado') ? 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all-co.json?v=' + vSec() : 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json?v=' + vSec();
-    var pointDataFile = (view_colorado == 'colorado') ? 'wildfires-combined-all-co.json?v=' + vSec() : 'wildfires-combined-all.json?v=' + vSec();
+    //var pointDataFile = (view_colorado == 'colorado') ? 'wildfires-combined-all-co.json?v=' + vSec() : 'wildfires-combined-all.json?v=' + vSec();
 
     $.getJSON(pointDataFile, getData);
     // ACTIVE U.S. WILDFIRES IN 2018
@@ -407,7 +407,7 @@
     // All 2018 FIRE PERIMETERS
     // 
     var perimDataFile = (view_colorado == 'colorado') ? 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims-co.json?v=' + vSec() : 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims.json?v=' + vSec();
-    var perimDataFile = (view_colorado == 'colorado') ? 'wildfires-combined-perims-co.json?v=' + vSec() : 'wildfires-combined-perims.json?v=' + vSec();
+    //var perimDataFile = (view_colorado == 'colorado') ? 'wildfires-combined-perims-co.json?v=' + vSec() : 'wildfires-combined-perims.json?v=' + vSec();
 
     $.getJSON(perimDataFile, function(data) {
         geojsonLayer = L.geoJson(data, {
