@@ -75,6 +75,22 @@
         *display: inline;
     }
 
+    #viewSelect a,
+    #viewSelect a:hover,
+    #viewSelect a:active,
+    #viewSelect a:visited {
+        color:#224499;
+        text-decoration:none;
+        font-weight:bold;
+    }
+    #viewSelect a.active,
+    #viewSelect a.active:hover,
+    #viewSelect a.active:active,
+    #viewSelect a.active:visited {
+        color:#aabbee;
+        text-decoration:none;
+        pointer-events: none;
+    }
     .legend-marker-text {
         margin-top: -32px;
         margin-left: 35px;
@@ -144,9 +160,12 @@
         </ul>
     </div>
     <hr style="margin-top:-8px;margin-bottom:-6px;">
+    <div id="viewSelect" style="float:left;display:inline-block;margin-right:3em;">
+        <p><strong>View:</strong> <a href="./?view=colorado" id="viewSelectColorado">Colorado</a> | <a href="./" id="viewSelectUs">U.S.</a></p>
+    </div>
     <div id="fireDropdownWrap" style="display:none;">
-        <p><strong>Zoom to a Colorado wildfire</strong></p>
-        <form style="margin-top:16px;margin-left: 5px;">
+        <p style="float:left;display:inline-block;margin-right:1em;"><strong>Zoom to a Colorado fire:</strong> </p>
+        <form style="margin-top:15px;margin-left: 5px;display:inline-block;float:left;">
             <select id="fireDropdown">
                 <option>Choose a fire</option>
             </select>
@@ -195,6 +214,14 @@
 
     if (typeof QueryString.fire != 'undefined') {
         var zoom_to_fire = QueryString.fire;
+    }
+    if (typeof QueryString.view != 'undefined') {
+        var view_colorado = QueryString.view;
+    }
+    if (view_colorado == 'colorado') {
+        $('#viewSelectColorado').addClass('active');
+    } else{
+        $('#viewSelectUs').addClass('active');
     }
 
     var coFires = new Array();
@@ -301,9 +328,11 @@
     // MANUALLY ADD FIRES
     // L.marker([39.625579999999999, -106.1103], { icon: smallFireIcon }).addTo(activeWildfiresUS2018).bindPopup('<h3 class="fire-name">' + 'Buffalo' + '</h3><br>' + 'Acres: ' + '91' + '<br>' + 'Contained: ' + '20' + '%' + '<br>' + 'Started: ' + 'June 12, 2018' + '<br>' + 'Cause: ' + 'Unknown' + '<br>' + '<span class="update"><a href="' + 'https://inciweb.nwcg.gov/incident/5841/' + '" target="_blank">Fire details</a> &bull; Updated<br>' + 'June 14, 2018 7:08 AM' + '</span>');
 
-    //$.getJSON("wildfires-combined-all.json?v=" + vSec(), getData);
-    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json?v=" + vSec(), getData);
+    
+    var pointDataFile = (view_colorado == 'colorado') ? 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all-co.json?v=' + vSec() : 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json?v=' + vSec();
+    var pointDataFile = (view_colorado == 'colorado') ? 'wildfires-combined-all-co.json?v=' + vSec() : 'wildfires-combined-all.json?v=' + vSec();
 
+    $.getJSON(pointDataFile, getData);
     // ACTIVE U.S. WILDFIRES IN 2018
     function getData(data) {
         L.geoJson(data, {
@@ -376,8 +405,11 @@
 
     var geojsonLayer = false;
     // All 2018 FIRE PERIMETERS
-    //$.getJSON("wildfires-combined-perims.json?v=" + vSec(), function(data) {
-    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims.json?v=" + vSec(), function(data) {
+    // 
+    var perimDataFile = (view_colorado == 'colorado') ? 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims-co.json?v=' + vSec() : 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims.json?v=' + vSec();
+    var perimDataFile = (view_colorado == 'colorado') ? 'wildfires-combined-perims-co.json?v=' + vSec() : 'wildfires-combined-perims.json?v=' + vSec();
+
+    $.getJSON(perimDataFile, function(data) {
         geojsonLayer = L.geoJson(data, {
             style: function(feature) {
                 var fillColor;
@@ -419,7 +451,7 @@
             //console.log(el.value);
             sel.appendChild(el);
         };
-        $('#fireDropdownWrap').css('display', 'flex');
+        $('#fireDropdownWrap').css('display', 'inline-block');
         $('#fireDropdown').on('change', function() {
             var fire = $(this).val();
             changeView(coFires[fire]);
