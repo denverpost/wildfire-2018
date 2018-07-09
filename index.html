@@ -143,10 +143,10 @@
         </ul>
     </div>
     <hr style="margin-top:-8px;margin-bottom:-6px;">
-    <div style="display:flex;">
+    <div id="fireDropdownWrap" style="display:none;">
         <p><strong>Zoom to a Colorado wildfire</strong></p>
         <form style="margin-top:16px;margin-left: 5px;">
-            <select id="fireDropdown" style="display:none;">
+            <select id="fireDropdown">
                 <option>Choose a fire</option>
             </select>
         </form>
@@ -418,7 +418,7 @@
             //console.log(el.value);
             sel.appendChild(el);
         };
-        $('#fireDropdown').css('display', 'block');
+        $('#fireDropdownWrap').css('display', 'flex');
         $('#fireDropdown').on('change', function() {
             var fire = $(this).val();
             changeView(coFires[fire]);
