@@ -254,8 +254,8 @@
     });
 
     var baseLayers = {
-        "Terrain map": terrainMap,
         "Road map": roadMap,
+        "Terrain map": terrainMap,
         "Satellite map": satelliteMap,
         "Monochrome map": monochromeMap
     }
@@ -263,8 +263,8 @@
     var groupedOverlays = {
         "Background": {
             "Active wildfires": activeWildfiresUS2018,
-            "Wildfire perimeters": perimeters2018,
-            "Contained wildfires": containedWildfiresUS2018
+            "Contained wildfires": containedWildfiresUS2018,
+            "Wildfire perimeters": perimeters2018
         },
     };
 
@@ -272,7 +272,7 @@
         center: [37.0119, -105.4842],
         zoom: 6,
         //dragging: false,
-        layers: [terrainMap, activeWildfiresUS2018, perimeters2018]
+        layers: [roadMap, activeWildfiresUS2018, perimeters2018]
     });
     var smallFireIcon = L.icon({
         iconUrl: 'small-fire.png',
@@ -433,6 +433,7 @@
                     if (fireStatus === 'Y') {
                         activeFireNames.push(feature.properties.incidentname);
                     }
+                    //console.log(coFires);
                 }
             }
         }).addTo(perimeters2018);
@@ -472,7 +473,7 @@
     $(document).ready(function() {
         var checkExist = setInterval(function() {
            if (activeFireNames.length > 0) {
-              console.log(activeFireNames);
+              //console.log(activeFireNames);
               init();
               clearInterval(checkExist);
            }
