@@ -430,14 +430,20 @@
         map.flyToBounds(feature.getBounds(), { maxZoom: 12 });
     }
 
+    function init(){
+        populateSelect(activeFireNames);
+        if (typeof zoom_to_fire != 'undefined') {
+            changeView(coFires[zoom_to_fire]);
+        }
+    }
     $(document).ready(function() {
-        setTimeout(function() {
-            populateSelect(activeFireNames);
-            if (typeof zoom_to_fire != 'undefined') {
-                //console.log(coFires[zoom_to_fire]);
-                changeView(coFires[zoom_to_fire]);
-            }
-        }, 3000);
+        var checkExist = setInterval(function() {
+           if (activeFireNames.length > 0) {
+              console.log(activeFireNames);
+              init();
+              clearInterval(checkExist);
+           }
+        }, 100);
     });
     </script>
 </body>
