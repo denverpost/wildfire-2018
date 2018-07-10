@@ -25,120 +25,159 @@
         margin: 0;
         padding: 5px;
         font-family: 'Roboto', sans-serif;
+        background-color: #fafafa;
     }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <span id="state-dropdown" style="font-weight: bold;"></span>
         <table id="wildfire-table" class="display nowrap" width="100%">
         </table>
     </div>
     <script>
-    $.getJSON("https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json", function(data) {
+    // VERSIONING FOR BROWSER CACHE
+    function vSec() {
+        var dt = new Date();
+        var secs = dt.getSeconds() + (60 * dt.getMinutes());
+        return secs;
+    }
+
+    var pointDataFile = 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json?v=' + vSec();
+    // var pointDataFile = 'wildfires-combined-all.json?v=' + vSec();
+
+    $.getJSON(pointDataFile, function(data) {
         var renderer = $.fn.dataTable.render.moment("x", "MMM D");
 
-        $('#wildfire-table').dataTable({
-            "data": data,
-            // "responsive": {
-            //     //true
-            //     "details": false,
-            // },
-            //"dom": '<fl<t>ip>',
-            "scrollX": true,
-            "order": [
-                [4, "desc"]
-            ],
-            "columnDefs": [{
-                    "type": "string",
-                    "targets": 0
-                },
-                {
-                    "type": "string",
-                    "targets": 1
-                },
-                {
-                    "type": "num-fmt",
-                    "targets": 2,
-                    "render": $.fn.dataTable.render.number(',', '.')
-                },
-                {
-                    "type": "num-fmt",
-                    "targets": 3
-                },
-                {
-                    "type": "datetime",
-                    "targets": 4,
-                    "render": $.fn.dataTable.render.moment("x", "MMM D")
-                },
-                // {
-                //     "type": "datetime",
-                //     "targets": 5
-                //     //"render": $.fn.dataTable.render.moment("x", "MMM D")
+        $(document).ready(function() {
+
+            var table = $('#wildfire-table').DataTable({
+                "data": data,
+                // "responsive": {
+                //     //true
+                //     "details": false,
                 // },
-                {
-                    "type": "string",
-                    "targets": 5
-                }, {
-                    "type": "string",
-                    "targets": 6,
-                    "visible": false
-                }
-            ],
-            "columns": [{
-                    "data": "properties.incidentname",
-                    "title": "Fire name",
-                    "render": function(data, type, row, meta) {
-                        if (typeof row.properties.iw_link === "undefined") {
-                            return data
-                        } else {
-                            return data = '<a href="' + row.properties.iw_link + '" target="_blank">' + data + '</a>'
+                "dom": '<lf<t>ip>',
+                //"searching": true,
+                "scrollX": true,
+                "order": [
+                    [4, "desc"]
+                ],
+                "columnDefs": [{
+                        "type": "string",
+                        "targets": 0
+                    },
+                    {
+                        "type": "string",
+                        "targets": 1
+                    },
+                    {
+                        "type": "num-fmt",
+                        "targets": 2,
+                        "render": $.fn.dataTable.render.number(',', '.')
+                    },
+                    {
+                        "type": "num-fmt",
+                        "targets": 3
+                    },
+                    {
+                        "type": "datetime",
+                        "targets": 4,
+                        "render": $.fn.dataTable.render.moment("x", "MMM D")
+                    },
+                    // {
+                    //     "type": "datetime",
+                    //     "targets": 5
+                    //     //"render": $.fn.dataTable.render.moment("x", "MMM D")
+                    // },
+                    {
+                        "type": "string",
+                        "targets": 5
+                    }, {
+                        "type": "string",
+                        "targets": 6,
+                        "visible": false
+                    }
+                ],
+                "columns": [{
+                        "data": "properties.incidentname",
+                        "title": "Fire name",
+                        "render": function(data, type, row, meta) {
+                            if (typeof row.properties.iw_link === "undefined") {
+                                return data
+                            } else {
+                                return data = '<a href="' + row.properties.iw_link + '" target="_blank">' + data + '</a>'
+                            }
                         }
-                    }
-                },
-                {
-                    "data": "properties.state",
-                    "title": "State"
-                },
-                {
-                    "data": "properties.acres",
-                    "title": "Acres",
-                },
-                {
-                    "data": "properties.percentcontained",
-                    "title": "Contained",
-                    "render": function(data, type, row, meta) {
-                        return data + '%'
-                    }
-                },
-                {
-                    "data": "properties.firediscoverydatetime",
-                    "title": "Started"
-                    // "type": "datetime",
-                    // "render": $.fn.dataTable.render.moment("x", "MMM D")
-                },
-                // {
-                //     "data": "properties.containmentdatetime",
-                //     "title": "Date contained",
-                //     "render": function(data, type, row) {
-                //         if (data != null) {
-                //             return renderer(data, type, row)
-                //         } else {
-                //             return "&mdash;"
-                //         }
-                //     }
-                // },
-                {
-                    "data": "properties.firecause",
-                    "title": "Cause"
-                },
-                {
-                    "data": "properties.iw_link",
-                    "title": "Link",
-                    "defaultContent": ""
+                    },
+                    {
+                        "data": "properties.state",
+                        "title": "State"
+                    },
+                    {
+                        "data": "properties.acres",
+                        "title": "Acres",
+                    },
+                    {
+                        "data": "properties.percentcontained",
+                        "title": "Contained",
+                        "render": function(data, type, row, meta) {
+                            return data + '%'
+                        }
+                    },
+                    {
+                        "data": "properties.firediscoverydatetime",
+                        "title": "Started"
+                        // "type": "datetime",
+                        // "render": $.fn.dataTable.render.moment("x", "MMM D")
+                    },
+                    // {
+                    //     "data": "properties.containmentdatetime",
+                    //     "title": "Date contained",
+                    //     "render": function(data, type, row) {
+                    //         if (data != null) {
+                    //             return renderer(data, type, row)
+                    //         } else {
+                    //             return "&mdash;"
+                    //         }
+                    //     }
+                    // },
+                    {
+                        "data": "properties.firecause",
+                        "title": "Cause"
+                    },
+                    {
+                        "data": "properties.iw_link",
+                        "title": "Link",
+                        "defaultContent": ""
+                    },
+                ],
+                // State dropdown search
+                initComplete: function() {
+                    var column = this.api().column(1);
+                    var select = $('<select><option value=""></option></select>')
+                        .appendTo($('#state-dropdown').empty().text('Choose a state: '))
+                        .on('change', function() {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+
+                        });
+                    column.data().unique().sort().each(function(d, j) {
+                        select.append('<option value="' + d + '">' + d + '</option>');
+                    });
                 }
-            ]
-        })
+            });
+
+            $('input#state-dropdown').on('keyup', function() {
+                table.column(1).search(this.value).order([0, 'asc']).draw();
+            });
+        });
+
         //console.log(data[0].properties.incidentname);
         var sum = 0;
         // for (var i = 0; i < data.length; i++) {
