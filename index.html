@@ -226,9 +226,9 @@
 
     var coFires = new Array();
 
-    var activeWildfiresUS2018 = new L.LayerGroup();
-    var containedWildfiresUS2018 = new L.LayerGroup();
-    var perimeters2018 = new L.LayerGroup();
+    var activeWildfiresUS = new L.LayerGroup();
+    var containedWildfiresUS = new L.LayerGroup();
+    var wildfirePerimetersUS = new L.LayerGroup();
 
     var terrainMap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.{ext}', {
         attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -262,9 +262,9 @@
 
     var groupedOverlays = {
         "Background": {
-            "Active wildfires": activeWildfiresUS2018,
-            "Contained wildfires": containedWildfiresUS2018,
-            "Wildfire perimeters": perimeters2018
+            "Active wildfires": activeWildfiresUS,
+            "Contained wildfires": containedWildfiresUS,
+            "Wildfire perimeters": wildfirePerimetersUS
         },
     };
 
@@ -272,7 +272,7 @@
         center: [37.0119, -105.4842],
         zoom: 6,
         //dragging: false,
-        layers: [roadMap, activeWildfiresUS2018, perimeters2018]
+        layers: [roadMap, activeWildfiresUS, wildfirePerimetersUS]
     });
     var smallFireIcon = L.icon({
         iconUrl: 'small-fire.png',
@@ -326,14 +326,15 @@
     // })
 
     // MANUALLY ADD FIRES
-    // L.marker([39.625579999999999, -106.1103], { icon: smallFireIcon }).addTo(activeWildfiresUS2018).bindPopup('<h3 class="fire-name">' + 'Buffalo' + '</h3><br>' + 'Acres: ' + '91' + '<br>' + 'Contained: ' + '20' + '%' + '<br>' + 'Started: ' + 'June 12, 2018' + '<br>' + 'Cause: ' + 'Unknown' + '<br>' + '<span class="update"><a href="' + 'https://inciweb.nwcg.gov/incident/5841/' + '" target="_blank">Fire details</a> &bull; Updated<br>' + 'June 14, 2018 7:08 AM' + '</span>');
+    // L.marker([39.625579999999999, -106.1103], { icon: smallFireIcon }).addTo(activeWildfiresUS).bindPopup('<h3 class="fire-name">' + 'Buffalo' + '</h3><br>' + 'Acres: ' + '91' + '<br>' + 'Contained: ' + '20' + '%' + '<br>' + 'Started: ' + 'June 12, 2018' + '<br>' + 'Cause: ' + 'Unknown' + '<br>' + '<span class="update"><a href="' + 'https://inciweb.nwcg.gov/incident/5841/' + '" target="_blank">Fire details</a> &bull; Updated<br>' + 'June 14, 2018 7:08 AM' + '</span>');
 
     
     var pointDataFile = (view_colorado == 'colorado') ? 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all-co.json?v=' + vSec() : 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-all.json?v=' + vSec();
-    //var pointDataFile = (view_colorado == 'colorado') ? 'wildfires-combined-all-co.json?v=' + vSec() : 'wildfires-combined-all.json?v=' + vSec();
+    // var pointDataFile = (view_colorado == 'colorado') ? 'wildfires-combined-all-co.json?v=' + vSec() : 'wildfires-combined-all.json?v=' + vSec();
+   
 
     $.getJSON(pointDataFile, getData);
-    // ACTIVE U.S. WILDFIRES IN 2018
+    // ACTIVE U.S. WILDFIRES
     function getData(data) {
         L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
@@ -366,9 +367,9 @@
                     return marker;
                 }
             }
-        }).addTo(activeWildfiresUS2018);
+        }).addTo(activeWildfiresUS);
 
-        // CONTAINED U.S. WILDFIRES IN 2018
+        // CONTAINED U.S. WILDFIRES
         L.geoJson(data, {
             pointToLayer: function(feature, latlng) {
                 var discoveryDate = moment(feature.properties.firediscoverydatetime).format('LL');
@@ -400,14 +401,14 @@
                     return marker;
                 }
             },
-        }).addTo(containedWildfiresUS2018);
+        }).addTo(containedWildfiresUS);
     };
 
     var geojsonLayer = false;
-    // All 2018 FIRE PERIMETERS
+    // All FIRE PERIMETERS
     // 
     var perimDataFile = (view_colorado == 'colorado') ? 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims-co.json?v=' + vSec() : 'https://extras.denverpost.com/app/wildfire/combined/wildfires-combined-perims.json?v=' + vSec();
-    //var perimDataFile = (view_colorado == 'colorado') ? 'wildfires-combined-perims-co.json?v=' + vSec() : 'wildfires-combined-perims.json?v=' + vSec();
+    // var perimDataFile = (view_colorado == 'colorado') ? 'wildfires-combined-perims-co.json?v=' + vSec() : 'wildfires-combined-perims.json?v=' + vSec();
 
     $.getJSON(perimDataFile, function(data) {
         geojsonLayer = L.geoJson(data, {
@@ -436,7 +437,7 @@
                     //console.log(coFires);
                 }
             }
-        }).addTo(perimeters2018);
+        }).addTo(wildfirePerimetersUS);
     });
     L.control.groupedLayers(baseLayers, groupedOverlays).addTo(map);
 
